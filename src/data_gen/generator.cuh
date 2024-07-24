@@ -20,6 +20,20 @@ template<typename T> using zipf_distribution_t = std::discrete_distribution<T>;
 #define RAND_RANGE48(N,STATE) ((double)nrand48(STATE)/((double)RAND_MAX+1)*(N))
 #define LOCK(L) while ((L).test_and_set()) {}
 
+/*
+    const size_t num_tuples = 10;
+    int keys[num_tuples] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    knuth_shuffle(keys, num_tuples);
+
+    for (size_t i = 0; i < num_tuples; ++i) {
+        std::cout << keys[i] << " ";
+    }
+
+    7 2 8 0 6 5 4 9 1 3
+
+
+*/
 template<typename T>
 void knuth_shuffle(T * keys, const size_t num_tuples, const int user_seed=42)
 {
@@ -49,6 +63,17 @@ void knuth_shuffle(T * keys, const size_t num_tuples, const int user_seed=42)
     }
 }
 
+/* generate an array of random integers uniformly distributed between vmin and vmax
+   int* relation;
+   const size_t num_tuples = 10;
+   create_integral_relation_nonunique<int, std::uniform_int_distribution<int>>(&relation, num_tuples, false, 0, 100);
+
+   for (size_t i = 0; i < num_tuples; ++i) {
+        std::cout << relation[i] << " ";
+   }
+
+   84 16 64 20 74 5 42 58 10 34
+*/
 template<typename T, typename DistT>
 void create_integral_relation_nonunique(T** relation, const size_t num_tuples,
                                    bool pinned,
@@ -81,6 +106,11 @@ void create_integral_relation_nonunique(T** relation, const size_t num_tuples,
     }
 }
 
+// An array of unique integers starting from a specific value, optionally shuffled.
+// int* relation;
+// const size_t num_tuples = 10;
+// create_integral_relation_unique(&relation, num_tuples, false, 100, true);
+// 106 100 101 107 104 103 102 105 109 108
 template<typename T>
 void create_integral_relation_unique(T** relation, const size_t num_tuples,
                                    bool pinned,
@@ -193,7 +223,8 @@ void create_integral_relation_nonunique(T** relation, const size_t num_tuples,
         }
     }
 }
-
+// input:  10 20 30 40  50
+// output: 40 10 30 20 10 50 20 40 50 30 40 50 30 20 10
 template<typename T>
 void create_fk_from_pk_uniform(T** fk, const size_t n_fk, const T* pk, const size_t n_pk, const int seed = 42, const bool pinned = false) {
     if(pinned) {
@@ -220,6 +251,9 @@ void create_fk_from_pk_uniform(T** fk, const size_t n_fk, const T* pk, const siz
     knuth_shuffle((*fk), n_fk);
 }
 
+// This function creates a foreign key (FK) relation following a Zipf distribution based on primary key (PK) values.
+//  {10, 20, 30, 40, 50};
+// 20 10 10 10 10 10 10 20 10 10 10 20 10 20 10
 template<typename T>
 void create_fk_from_pk_zipf(T** fk, const size_t n_fk, const T* pk, const size_t n_pk, const double zipf_factor, const int seed = 42, const bool pinned = false) {
     auto lut = gen_zipf_lut(zipf_factor, n_pk);
@@ -244,6 +278,8 @@ void create_fk_from_pk_zipf(T** fk, const size_t n_fk, const T* pk, const size_t
     }
 }
 
+// This function creates a relation where all elements are identical.
+// 42 42 42 42 42 42 42 42 42 42
 template<typename T>
 void create_relation_with_identical_elem(T** relation, const size_t n, T elem, const bool pinned = false) {
     if(pinned) {
