@@ -31,62 +31,86 @@ class PartitionHashJoin : public JoinBase<TupleOut> {
                   TupleR::num_cols+TupleS::num_cols == TupleOut::num_cols+1);
                   
 public:
+    // r_in: The first input table.
+    // s_in: The second input table.
+    // log_parts1: log base 2 of # of partitions for first level partitioning
+    // log_parts2: log base 2 of # of partitions for second level partitioning
+    // first_bit: starting bit for partitioning
     explicit PartitionHashJoin(TupleR r_in, TupleS s_in, int log_parts1, int log_parts2, int first_bit, int circular_buffer_size) 
-             : r(r_in)
-             , s(s_in)
-             , log_parts1(log_parts1)
-             , log_parts2(log_parts2)
-             , first_bit(first_bit)
-             , circular_buffer_size(circular_buffer_size) {
+             : r(r_in) // Initialize r with r_in
+             , s(s_in) // Initialize s with s_in
+             , log_parts1(log_parts1) // Initialize log_parts1
+             , log_parts2(log_parts2)  // Initialize log_parts2
+             , first_bit(first_bit)  // Initialize first_bit
+             , circular_buffer_size(circular_buffer_size) { // Initialize circular_buffer_size
+        // Number of items in r and s
         nr = r.num_items;
         ns = s.num_items;
-        
+
+        // Allocate memory for the output tuple
         out.allocate(circular_buffer_size);
 
+        // Calculate the number of partitions
         parts1 = 1 << log_parts1;
         parts2 = 1 << (log_parts1 + log_parts2);
-        
+
+        // Calculate the maximum number of buckets needed for r and s
         buckets_num_max_R    = ((((nr + parts2 - 1)/parts2) + bucket_size - 1)/bucket_size)*parts2 + 1024;
-        // we consider two extreme cases here 
+
+        // we consider two extreme cases here
         // (1) S keys are uniformly distributed across partitions; (2) S keys concentrate in one partition
         buckets_num_max_S    = std::max(((((ns + parts2 - 1)/parts2) + bucket_size - 1)/bucket_size)*parts2, 
                                         (ns+bucket_size-1)/bucket_size+parts2);
 
+        // Allocate memory for key partitions of r and s
         allocate_mem(&r_key_partitions, true, buckets_num_max_R * bucket_size * sizeof(key_t));
         allocate_mem(&s_key_partitions, true, buckets_num_max_S * bucket_size * sizeof(key_t));
+
+        // Copy keys from r and s to then allocated partitions
         cudaMemcpy(r_key_partitions, COL(r,0), nr*sizeof(key_t), cudaMemcpyDefault);
         cudaMemcpy(s_key_partitions, COL(s,0), ns*sizeof(key_t), cudaMemcpyDefault);
 //  #ifndef CHECK_CORRECTNESS
 //          release_mem(COL(r,0));
 //          release_mem(COL(s,0));
 //  #endif
+        // Allocate temporary memory for key partitions of r and s
         allocate_mem(&r_key_partitions_temp, true, buckets_num_max_R * bucket_size * sizeof(key_t));
         allocate_mem(&s_key_partitions_temp, true, buckets_num_max_S * bucket_size * sizeof(key_t));
 
-        if constexpr (early_materialization) {
+        if constexpr (early_materialization) { // If early materialization is enabled
+            // Allocate memory for value partitions of r and s
             allocate_mem(&r_val_partitions, true, buckets_num_max_R * bucket_size * sizeof(r_val_t));
             allocate_mem(&s_val_partitions, true, buckets_num_max_S * bucket_size * sizeof(s_val_t));
+
+            // Copy values from r and s to the allocated partitions
             cudaMemcpy((r_val_t*)(r_val_partitions), COL(r,1), nr*sizeof(r_val_t), cudaMemcpyDefault);
             cudaMemcpy((s_val_t*)(s_val_partitions), COL(s,1), ns*sizeof(s_val_t), cudaMemcpyDefault);
 //  #ifndef CHECK_CORRECTNESS
 //              release_mem(COL(r,1));
 //              release_mem(COL(s,1));
 //  #endif
+            // allocated temporary memory for value partitions of r and s
             allocate_mem(&s_val_partitions_temp, true, buckets_num_max_S * bucket_size * sizeof(s_val_t));
             allocate_mem(&r_val_partitions_temp, true, buckets_num_max_R * bucket_size * sizeof(r_val_t));
         }
-        else {
+        else { // If early materialization is not enabled
+            // Allocate memory for value partitions of r and s as int32_t
             allocate_mem(&r_val_partitions, true, buckets_num_max_R * bucket_size * sizeof(int32_t));
             allocate_mem(&r_val_partitions_temp, true, buckets_num_max_R * bucket_size * sizeof(int32_t));
             allocate_mem(&s_val_partitions, true, buckets_num_max_S * bucket_size * sizeof(int32_t));
             allocate_mem(&s_val_partitions_temp, true, buckets_num_max_S * bucket_size * sizeof(int32_t));
+
+            // Allocate memory for match indices
             allocate_mem(&r_match_idx, false, sizeof(int)*circular_buffer_size);
             allocate_mem(&s_match_idx, false, sizeof(int)*circular_buffer_size);
+
+            // Fill sequence for value partitions of r and s
             fill_sequence<<<num_tb(nr), 1024>>>((int*)(r_val_partitions), 0, nr);
             fill_sequence<<<num_tb(ns), 1024>>>((int*)(s_val_partitions), 0, ns);
         }
 
         for (int i = 0; i < 2; i++) {
+            // Allocate memory for chains, counts, heads, and buckets used for a and s
             allocate_mem(&chains_R[i], false, buckets_num_max_R * sizeof(uint32_t));
             allocate_mem(&cnts_R[i], false, parts2 * sizeof(uint32_t));
             allocate_mem(&heads_R[i], false, parts2 * sizeof(uint64_t));
@@ -98,10 +122,13 @@ public:
             allocate_mem(&buckets_used_S[i], false, sizeof(uint32_t));
         }
 
+        // Set bucket_info_R to point to s_val_partitions_temp
         bucket_info_R = (uint32_t*)s_val_partitions_temp;
 
+        // Allocate memory for number of matches
         allocate_mem(&d_n_matches);
 
+        // Create CUDA events for timing
         cudaEventCreate(&start); 
         cudaEventCreate(&stop);
     }
@@ -137,45 +164,67 @@ public:
     }
 
 public:
+    // This method performs the entire join process and returns the resulting joined tuple.
     TupleOut join() override {
+        // Measure and accumulate the time taken for the partitioning step.
         TIME_FUNC_ACC(partition(), partition_time);
+
+        // Swap the roles of R and S to ensure balanced partitioning.
         swap_r_s();
+
+        // Measure and accumulate the time taken for balancing the buckets.
         TIME_FUNC_ACC(balance_buckets(), partition_time);
+
+        // Measure and accumulate the time taken for performing the hash join.
         TIME_FUNC_ACC(hash_join(), join_time);
+
+        // Swap the roles of R and S back to their original roles?
         swap_r_s();
+
+        // Measure and accumulate the time taken for materializing the result.
         TIME_FUNC_ACC(materialize_by_gather(), mat_time);
-        
+
+        // If early materialization is enabled, swap data columns for the
         if constexpr (early_materialization) {
             std::swap(out.data[1], out.data[2]);
         }
 
+        // Set the number of items in the output tuple to the number of matches found.
         out.num_items = n_matches;
 
+
+        // Return the resulting joined tuple.
         return out;
     }
 
+    // This method prints the timing statistics for the join operation.
     void print_stats() override {
         std::cout << "Partition: " << partition_time << " ms\n"
                   << "Join: " << join_time << " ms\n"
                   << "Materialize: " << mat_time << " ms\n\n";
     }
 
+    // This method returns the timing statistics for the join operation as a vector of floats.
     std::vector<float> all_stats() override {
         return {partition_time, join_time, mat_time};
     }
 
 public:
+    // Timing variables to store the time taken for each step of the join process
     float partition_time {0};
     float join_time {0};
     float mat_time {0};
 
 private:
+    // Template function for partitioning the keys and values
     template<typename KeyT, typename val_t>
     void partition(KeyT* keys, KeyT* keys_out, 
                    val_t* vals, val_t* vals_out, int n, int buckets_num,
                    uint64_t* heads[2], uint32_t* cnts[2], 
                    uint32_t* chains[2], uint32_t* buckets_used[2]) {
+    // Determine the number of threads per block (NT) based on the size of the key type
     constexpr int NT = (sizeof(KeyT) == 4 ? 1024 : 512);
+    // Number of values processed per thread (VT)
     constexpr int VT = 4;
 
     // shuffle region + histogram region + extra meta info
