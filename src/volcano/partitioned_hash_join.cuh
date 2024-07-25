@@ -332,17 +332,28 @@ private:
         }
     }
 
+    // Function to perform the hash join
     void hash_join() {
+        // Number of threads per block
         constexpr int NT = 512;
+        // Number of values processed per thread
         constexpr int VT = 4;
 
         if constexpr (early_materialization) {
+
+            // Calculate teh size of shared memory needed for early materialization
             size_t sm_bytes = (bucket_size + 512) * (sizeof(key_t) + sizeof(r_val_t) + sizeof(int16_t)) + // elem, payload and next resp.
                             (1 << LOCAL_BUCKETS_BITS) * sizeof(int32_t) + // hash table head
                             + SHUFFLE_SIZE * (NT/32) * (sizeof(key_t) + sizeof(r_val_t) + sizeof(s_val_t));
             std::cout << "sm_bytes: " << sm_bytes << std::endl;
+
+            // Define the join function for early materialization
             auto join_fn = join_copartitions<NT, VT, LOCAL_BUCKETS_BITS, SHUFFLE_SIZE, key_t, r_val_t>;
+
+            // Set the maximum dynamic shared memory size for the join function
             cudaFuncSetAttribute(join_fn, cudaFuncAttributeMaxDynamicSharedMemorySize, sm_bytes);
+
+            // Launch the join function kernel for early materialization
             join_fn<<<(1 << (log_parts1+log_parts2)), NT, sm_bytes>>>
                                 (r_key_partitions, (r_val_t*)(r_val_partitions), 
                                 chains_R[1], bucket_info_R, 
@@ -353,12 +364,19 @@ private:
                                 COL(out, 0), COL(out, 1), COL(out, 2), circular_buffer_size);
         }
         else {
+             // Calculate the size of shared memory needed for late materialization
             size_t sm_bytes = (bucket_size + 512) * (sizeof(key_t) + sizeof(int) + sizeof(int16_t)) + // elem, payload and next resp.
                             (1 << LOCAL_BUCKETS_BITS) * sizeof(int32_t) + // hash table head
                             + SHUFFLE_SIZE * (NT/32) * (sizeof(key_t) + sizeof(int)*2);
             std::cout << "sm_bytes: " << sm_bytes << std::endl;
+
+            // Define the join function for late materialization
             auto join_fn = join_copartitions<NT, VT, LOCAL_BUCKETS_BITS, SHUFFLE_SIZE, key_t, int>;
+
+            // Set the maximum dynamic shared memory size for the join function
             cudaFuncSetAttribute(join_fn, cudaFuncAttributeMaxDynamicSharedMemorySize, sm_bytes);
+
+            // Launch the join function kernel for late materialization
             join_fn<<<(1 << (log_parts1+log_parts2)), NT, sm_bytes>>>
                                 (r_key_partitions, (int*)(r_val_partitions), 
                                 chains_R[1], bucket_info_R, 
@@ -369,6 +387,7 @@ private:
                                 COL(out, 0), r_match_idx, s_match_idx, circular_buffer_size);
         }
 
+        // Copy the number of matches from device to host memory
         cudaMemcpy(&n_matches, d_n_matches, sizeof(n_matches), cudaMemcpyDeviceToHost);
     }
 
