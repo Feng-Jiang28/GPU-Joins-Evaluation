@@ -227,8 +227,11 @@ private:
     // Number of values processed per thread (VT)
     constexpr int VT = 4;
 
-    // shuffle region + histogram region + extra meta info
+    // shared memory size calculation:
+    // Calculate the size of shard memory needed for the first and second partition passes.
+    // p1_sm_bytes: shared memory for the shuffle region, histogram region, and extra info for the first pass
     const size_t p1_sm_bytes = (NT*VT) * max(sizeof(KeyT), sizeof(val_t)) + (4*(1 << log_parts1)) * sizeof(int32_t);
+    // p2_sm_bytes: shared memory for the shuffle region, histogram region, and extra meta info for the second pass
     const size_t p2_sm_bytes = (NT*VT) * max(sizeof(KeyT), sizeof(val_t)) + (4*(1 << log_parts2)) * sizeof(int32_t);
     
 #if defined(SM860)
@@ -237,6 +240,7 @@ private:
     const int sm_counts = 108;
 #endif
 
+    // Initialize metadata for double buffering
     init_metadata_double<<<sm_counts, NT, 0>>> (
         heads[0], buckets_used[0], chains[0], cnts[0], 
         1 << log_parts1, buckets_num,
@@ -244,6 +248,8 @@ private:
         1 << (log_parts1 + log_parts2), buckets_num, 
         bucket_size
     );
+
+    // First partition pass: partition the keys and values into initial buckets.
     partition_pass_one<NT, VT><<<sm_counts, NT, p1_sm_bytes>>>(
                                                 keys, 
                                                 vals,
@@ -258,7 +264,10 @@ private:
                                                 first_bit + log_parts2,
                                                 log2_bucket_size);
 
+    // Compute bucket information based on the results of the first partition pass
     compute_bucket_info <<<sm_counts, NT>>> (chains[0], cnts[0], log_parts1);
+
+    // Second partition pass: refine the partitioning into finer buckets
     partition_pass_two<NT, VT> <<<sm_counts, NT, p2_sm_bytes>>>(
                                     keys_out, 
                                     vals_out,
@@ -274,30 +283,47 @@ private:
                                     buckets_used[0],
                                     log2_bucket_size);
 }
-    
+    // Function to partition the input keys and values into buckets
     void partition() {
+        // Define temporary types for r and s based on whether early materialization is enabled
         using r_temp_t = std::conditional_t<early_materialization, r_val_t*, int*>;
         using s_temp_t = std::conditional_t<early_materialization, s_val_t*, int*>;
-        
+
+        // Partition the keys and values for relation R
         partition(r_key_partitions, r_key_partitions_temp, 
                   (r_temp_t)(r_val_partitions), (r_temp_t)(r_val_partitions_temp), 
                   nr, 
                   buckets_num_max_R, heads_R, cnts_R, chains_R, buckets_used_R);
-        
+
+        // Partition the keys and values for relation S
         partition(s_key_partitions, s_key_partitions_temp, 
                   (s_temp_t)(s_val_partitions), (s_temp_t)(s_val_partitions_temp), 
                   ns, 
                   buckets_num_max_S, heads_S, cnts_S, chains_S, buckets_used_S);
     }
-
+    // Function to balance the buckets after partitioning
     void balance_buckets() {
-        decompose_chains <<<(1 << log_parts1), 1024>>> (bucket_info_R, chains_R[1], cnts_R[1], log_parts1 + log_parts2, 2*bucket_size, bucket_size);  
+        // Decompose chains to balance the bucket sizes
+        decompose_chains <<<(1 << log_parts1), 1024>>> (
+        bucket_info_R, // Bucket information
+        chains_R[1], // Chains for R in the second pass
+        cnts_R[1], // Counts for R in the second pass
+        log_parts1 + log_parts2, // Total number of partitioning bits
+        2*bucket_size, // Twice the bucket size
+        bucket_size // Bucket size
+        );
     }
 
+    // Function to swap the roles of R and S
     void swap_r_s() {
+        // Swap the key partition of R and S
         std::swap(r_key_partitions, s_key_partitions);
+        // Swap the value partitions of R and S
         std::swap(r_val_partitions, s_val_partitions);
+        // Swap the match indices of R and S
         std::swap(r_match_idx, s_match_idx);
+
+        // Swap the chains, counts, heads, and buckets used for R and S
         for (int i = 0; i < 2; i++) {
             std::swap(chains_R[i], chains_S[i]);
             std::swap(cnts_R[i], cnts_S[i]);
