@@ -391,52 +391,74 @@ private:
         cudaMemcpy(&n_matches, d_n_matches, sizeof(n_matches), cudaMemcpyDeviceToHost);
     }
 
-    void materialize_by_gather() {
+    // Function to materialize the join results by gathering the matched values
+    void materialize_by_gather() {  // Check if early materialization is not enabled
         if constexpr (!early_materialization) {
+            // Loop over the columns of relation R, excluding the key column
             for_<r_cols-1>([&](auto i) {
                 using val_t = std::tuple_element_t<i.value+1, typename TupleR::value_type>;
                 thrust::device_ptr<val_t> dev_data_ptr(COL(r, i.value+1));
                 thrust::device_ptr<int> dev_idx_ptr(r_match_idx);
                 thrust::device_ptr<val_t> dev_out_ptr(COL(out, i.value+1));
+
+                // Gather the matched values from the column data of R using the match indices
                 thrust::gather(dev_idx_ptr, dev_idx_ptr+std::min(circular_buffer_size, n_matches), dev_data_ptr, dev_out_ptr);
             });
+
+            // Loop over the columns of relation S, excluding the key column
             for_<s_cols-1>([&](auto i) {
                 constexpr auto k = i.value+r_cols;
                 using val_t = std::tuple_element_t<i.value+1, typename TupleS::value_type>;
                 
                 // using thrust has the same performance
+                 // Get device pointer to the column data of S
                 thrust::device_ptr<val_t> dev_data_ptr(COL(s, i.value+1));
+                // Get device pointer to the match indices of S
                 thrust::device_ptr<int> dev_idx_ptr(s_match_idx);
+                // Get device pointer to the output column data
                 thrust::device_ptr<val_t> dev_out_ptr(COL(out, k));
+
+                // Gather the matched values from the column data of S using the match indices
                 thrust::gather(dev_idx_ptr, dev_idx_ptr+std::min(circular_buffer_size, n_matches), dev_data_ptr, dev_out_ptr);
             });
         }
     }
 
 private:
+    // Number of columns in TupleR and TupleS
     static constexpr auto  r_cols = TupleR::num_cols;
     static constexpr auto  s_cols = TupleS::num_cols;
+
+    // Flags for early materialization based on the number of columns and the kAlwaysLateMaterialization flag
     static constexpr bool r_materialize_early = (r_cols == 2 && !kAlwaysLateMaterialization);
     static constexpr bool s_materialize_early = (s_cols == 2 && !kAlwaysLateMaterialization);
     static constexpr bool early_materialization = (r_materialize_early && s_materialize_early);
+
+     // Constants for bucket size calculations
     static constexpr uint32_t log2_bucket_size = 12;
     static constexpr uint32_t bucket_size = (1 << log2_bucket_size);
+
+    // Constants for local bucket bits and shuffle size calculations
     static constexpr int LOCAL_BUCKETS_BITS = 11;
     static constexpr int SHUFFLE_SIZE = (early_materialization ? ((TupleR::row_bytes + TupleS::row_bytes <= 24) ? 32 : 24) : (sizeof(std::tuple_element_t<0, typename TupleR::value_type>) == 4 ? 32 : 16));
-    
+
+    // Type aliases for key and value types in TupleR and TupleS
     using key_t = std::tuple_element_t<0, typename TupleR::value_type>;
     using r_val_t = std::tuple_element_t<1, typename TupleR::value_type>;
     using s_val_t = std::tuple_element_t<1, typename TupleS::value_type>;
 
+    // Input and output tuples
     TupleR r;
     TupleS s;
     TupleOut out;
-    
+
+    // Number of items in TupleR and TupleS
     int nr;
     int ns;
-    int n_matches;
-    int circular_buffer_size;
+    int n_matches; // Number of matches found
+    int circular_buffer_size; // Size of the circular buffer
 
+    // Partitioning parameters
     int first_bit;
     int parts1;
     int parts2;
@@ -445,11 +467,13 @@ private:
     size_t buckets_num_max_R;
     size_t buckets_num_max_S;
 
+    // Pointers to key partitions and their temporary storage for TupleR and TupleS
     key_t* r_key_partitions      {nullptr};
     key_t* s_key_partitions      {nullptr};
     key_t* r_key_partitions_temp {nullptr};
     key_t* s_key_partitions_temp {nullptr};
 
+    // Pointers to value partitions and their temporary storage for TupleR and TupleS
     void* r_val_partitions       {nullptr};
     void* s_val_partitions       {nullptr};
     void* r_val_partitions_temp  {nullptr};
@@ -468,13 +492,16 @@ private:
     uint32_t* buckets_used_R[2];
     uint32_t* buckets_used_S[2];
 
-    uint32_t* bucket_info_R{nullptr};
+    uint32_t* bucket_info_R{nullptr}; // Information about the buckets for TupleR
 
+    // Match indices for TupleR and TupleS
     int*   r_match_idx     {nullptr};
     int*   s_match_idx     {nullptr};
 
+    // Pointer to the number of matches found
     int*   d_n_matches     {nullptr};
 
+     // CUDA events for timing
     cudaEvent_t start;
     cudaEvent_t stop;
 };
