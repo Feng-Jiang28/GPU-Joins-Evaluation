@@ -6,6 +6,7 @@
 #include <cuda.h>
 #include "vec_types.cuh"
 
+// Kernel to initialize metadata for double buffering
 __global__ void init_metadata_double ( 
                 uint64_t  * __restrict__ heads1,
                 uint32_t  * __restrict__ buckets_used1,
@@ -21,31 +22,40 @@ __global__ void init_metadata_double (
                 uint32_t buckets_num2,
                 const uint32_t bucket_size
                 ) {
+    // Calculate the mask for bucket size
     auto bucket_size_mask = bucket_size - 1;
+    // Calculate the thread ID
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
-
+    // Initialize chains1 to zero
     for (int i = tid; i < buckets_num1; i += blockDim.x*gridDim.x)
         chains1[i] = 0;
 
+    // Initialize out_cnts1 to zero
     for (int i = tid; i < parts1; i += blockDim.x*gridDim.x)
         out_cnts1[i] = 0;
 
+    // Initialize heads1 with a specific value
     for (int i = tid; i < parts1; i += blockDim.x*gridDim.x)
         heads1[i] = (1 << 18) + (((uint64_t) bucket_size_mask) << 32);
 
+    // Initialize buckets_used1 to parts1 for the first thread
     if (tid == 0) {
         *buckets_used1 = parts1;
     }
 
+    // Initialize chains2 to zero
     for (int i = tid; i < buckets_num2; i += blockDim.x*gridDim.x)
         chains2[i] = 0;
 
+    // Initialize out_cnts2 to zero
     for (int i = tid; i < parts2; i += blockDim.x*gridDim.x)
         out_cnts2[i] = 0;
 
+    // Initialize heads2 with a specific value
     for (int i = tid; i < parts2; i += blockDim.x*gridDim.x)
         heads2[i] = (1 << 18) + (((uint64_t) bucket_size_mask) << 32);
 
+    // Initialize buckets_used2 to parts2 for the first thread
     if (tid == 0) {
         *buckets_used2 = parts2;
     }
@@ -68,16 +78,20 @@ __global__ void partition_pass_one (
                                           uint32_t                 log_parts,
                                           uint32_t                 first_bit,
                                           uint32_t                 log2_bucket_size) {
+    // Number of threads * vector length
     constexpr auto NV = NT * VT;
 
+    // Shared memory space declaration
     extern __shared__ int int_shared[];
 
+    // Bucket size calculations
     const uint32_t bucket_size      = 1 << log2_bucket_size;
     const uint32_t bucket_size_mask = bucket_size - 1;
     
     const uint32_t parts     = 1 << log_parts;
     const KeyT parts_mask = (KeyT)parts - 1;
 
+    // Union to manage shuffle space
     union shuffle_space {
         KeyT key_elem[NV];
         ValT val_elem[NV];
