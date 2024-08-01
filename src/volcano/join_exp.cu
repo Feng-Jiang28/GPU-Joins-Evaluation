@@ -177,7 +177,7 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
 
         // create relation S
         if(input_exists(spath)) {
-            cout << "S read from disk\n"; ##
+            cout << "S read from disk\n";
             alloc_load_column(spath, skeys, ns);
         } else {
             if(args.dist == UNIFORM) {
