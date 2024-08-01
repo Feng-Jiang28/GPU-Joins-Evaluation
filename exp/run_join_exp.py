@@ -1,17 +1,21 @@
-import subprocess
-import numpy as np
+import subprocess # For running shell commands
+import numpy as np # ranges and comb of parameters
 import itertools
-import os
-import time
-import duckdb
-import pandas as pd
-import io
-import argparse
+import os # interacting with file system
+import time # time related functions
+import duckdb # For querying db
+import pandas as pd # for handling data in dataframe
+import io # For I/O operations
+import argparse # For parsing command-line arguements
 
+# This function constructs a command string to run a join operation using the specified parameters.
 def create_join_command(binary, nr, ns, pr, ps, algo, jtype = 'pkfk', dist='uniform', z = 0, sel = 1, p = 9, q = 6, uk = 1):
     command = f"{binary} -l -r {nr} -s {ns} -m {pr} -n {ps} -t {jtype} -d {dist} -z {z} -e {sel} -i {algo} -p {p} -q {q} -u {uk}"
     return command
 
+# This function creates a configuration database, either from a provided CSV file or by generating a set of parameter combinations.
+# Generates all parameter combinations and filters out invalid ones.
+# Returns a DataFrame of configurations or loads it from an existing CSV file.
 def create_config_database(config_path = None, save_path = None):
     if config_path is None:
         nr = range(20, 29)
@@ -38,7 +42,11 @@ def create_config_database(config_path = None, save_path = None):
         return df
     else:
         return pd.read_csv(config_path)
-    
+
+# This function executes the join experiments based on the provided configurations and logs the results.
+# Executes the join command for each configuration.
+# Logs the command and any failures to a file.
+# Repeats the experiment a specified number of times.
 def run_join_exp_from_query(binary, df, query, log_path, res_path, out_path, data_path, repeat = 5):
     config = duckdb.query(query).to_df()
     config.reset_index(inplace=True)
@@ -63,6 +71,7 @@ def run_join_exp_from_query(binary, df, query, log_path, res_path, out_path, dat
         f.write(f"[Round {r+1} of {repeat}] {cnt} experiments. {fail} fails.\n")
     f.close()
 
+# This function sets up the argument parser for command-line options.
 def make_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', '--binary', type=str, required=False, help='binary path')
@@ -78,6 +87,9 @@ def make_parser():
 
     return parser
 
+# Parses command-line arguments.
+# Creates or loads the configuration DataFrame.
+# Executes the specified experiments from a YAML configuration file.
 if __name__ == "__main__":
     parser = make_parser()
     args = parser.parse_args()

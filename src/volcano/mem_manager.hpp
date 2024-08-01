@@ -57,11 +57,9 @@ private:
     // find a block in the free list that is at least as large as sz
     block_type find_block(const size_t sz) {
         block_type ret;
-        
         for(auto b = free_list.begin(); b != free_list.end(); b++) {
             if(can_alloc(*b, sz)) {
                 char* alloc_start = roundup(b->data);
-                
                 ret.data = b->data;
                 ret.sz = sz + alloc_start - b->data;
 

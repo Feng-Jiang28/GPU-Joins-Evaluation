@@ -6,9 +6,9 @@ CUDA_BIN_PATH   ?= $(CUDA_PATH)/bin
 
 NVCC = nvcc
 
-# For RTX 3090
-SM_TARGETS   = -gencode=arch=compute_86,code=\"sm_86,compute_86\" 
-SM_DEF     = -DSM860
+# For TITAN V
+SM_TARGETS   = -gencode=arch=compute_70,code=\"sm_70,compute_70\"
+SM_DEF     = -DSM700
 
 # For A100
 # SM_TARGETS   = -gencode=arch=compute_80,code=\"sm_80,compute_80\" 

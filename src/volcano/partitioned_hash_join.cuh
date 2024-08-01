@@ -184,6 +184,8 @@ private:
     
 #if defined(SM860)
     const int sm_counts = 82;
+#elif defined(SM700)
+    const int sm_counts = 80;
 #elif defined(SM800)
     const int sm_counts = 108;
 #endif

@@ -14,7 +14,7 @@
 #define GET_DATA_TYPE(p) using p ## _t = std::remove_pointer_t<decltype(p)>;
 #define DEF_DATA_TYPE(p,type) using p ## _t = type;
 
-#define TPC_DATA_PREFIX "/scratch/wubo/vldb2024-tpc/"
+#define TPC_DATA_PREFIX "/home/fejiang/Downloads/vldb2024-tpc/"
 
 #define LOAD_COL(p, N) \
   long* p; \

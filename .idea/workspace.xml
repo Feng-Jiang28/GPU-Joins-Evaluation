@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b5ca71f5-10a8-4df3-8d77-724ad9d23646" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/exp/run_join_exp.py" beforeDir="false" afterPath="$PROJECT_DIR$/exp/run_join_exp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/volcano/join_exp.cu" beforeDir="false" afterPath="$PROJECT_DIR$/src/volcano/join_exp.cu" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/volcano/mem_manager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/volcano/mem_manager.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/volcano/partitioned_hash_join.cuh" beforeDir="false" afterPath="$PROJECT_DIR$/src/volcano/partitioned_hash_join.cuh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/volcano/tpc_utils.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/volcano/tpc_utils.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/volcano/utils.cuh" beforeDir="false" afterPath="$PROJECT_DIR$/src/volcano/utils.cuh" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2jbcr8HEPtAqaKPU8yqSGq2PUkE" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "cudfjoin",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/fejiang/IdeaProjects/GPU-Joins-Evaluation",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "vcs.Git",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.150" />
+        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-IU-241.15989.150" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b5ca71f5-10a8-4df3-8d77-724ad9d23646" name="Changes" comment="" />
+      <created>1721659413217</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1721659413217</updated>
+      <workItem from="1721659414150" duration="1967000" />
+      <workItem from="1721700479573" duration="339000" />
+      <workItem from="1721700863276" duration="13000" />
+      <workItem from="1721701096999" duration="22153000" />
+      <workItem from="1722153900822" duration="45000" />
+      <workItem from="1722154048709" duration="22000" />
+      <workItem from="1722154109880" duration="36000" />
+      <workItem from="1722154322716" duration="8000" />
+      <workItem from="1722339990060" duration="1206000" />
+      <workItem from="1722408397008" duration="1008000" />
+      <workItem from="1722411008854" duration="2459000" />
+      <workItem from="1722416397163" duration="20000" />
+      <workItem from="1722416434474" duration="10000" />
+      <workItem from="1722416505260" duration="4499000" />
+      <workItem from="1722436380488" duration="12653000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
