@@ -21,7 +21,7 @@
 #include "sort_hash_join.cuh"
 #include "experiment_util.cuh"
 #include "join_base.hpp"
-#include "join_kernel.cu"
+#include "join_kernels.cu"
 
 //  #define KEY_T_8B
 //  #define COL_T_8B
