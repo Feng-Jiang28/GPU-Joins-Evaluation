@@ -21,8 +21,8 @@
 #include "sort_hash_join.cuh"
 #include "experiment_util.cuh"
 #include "join_base.hpp"
-#include "join_kernels.cu"
-// #include "CudfJoin.cpp"
+#include "join_kernel.cu"
+
 //  #define KEY_T_8B
 //  #define COL_T_8B
 
@@ -50,7 +50,7 @@ char join_algo_name[4][32] = {{"PHJ"}, {"SMJ"}, {"SHJ"}, {"SMJI"}};
             run_test_multicols<join_key_t, col_t, TU ## c1, TU ## c2, TU ## c3>(args); \
         } \
     } \
-}f
+}
 
 struct join_args {
     int nr {4096};
@@ -58,7 +58,7 @@ struct join_args {
     int pr {1};
     int ps {1};
     int vec_size {8192};
-    int unique_keys {4096}; 
+    int unique_keys {4096};
     enum join_type type {PK_FK};
     enum dist_type dist {UNIFORM};
     double zipf_factor {1.5};
@@ -117,11 +117,11 @@ std::string get_path_name(enum Input table, const struct join_args& args) {
 #else
     std::string subfolder = "long/";
 #endif
-    
+
     if(table == UniqueKeys) {
         return args.data_path_prefix+subfolder+"r_" + std::to_string(uk) + ".bin";
     }
-    
+
     if(args.type == PK_FK) {
         return table == RelR ? args.data_path_prefix+subfolder+"r_" + std::to_string(nr) + ".bin"
                              : args.data_path_prefix+subfolder+"s_" + std::to_string(nr) + "_" +std::to_string(ns) + "_" + (args.dist == UNIFORM ? "uniform" : "zipf_") + (args.dist == UNIFORM ? "" : std::to_string(args.zipf_factor))+".bin";
@@ -165,7 +165,7 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
 
     std::string rpath = get_path_name(RelR, args);
     std::string spath = get_path_name(RelS, args);
-    
+
     if(args.type == PK_FK) {
         // create relation R
         if(input_exists(rpath)) {
@@ -222,7 +222,7 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
         if(input_exists(spath)) {
             cout << "S read from disk\n";
             alloc_load_column(spath, skeys, ns);
-        } else {    
+        } else {
             create_fk_from_pk_uniform(&skeys, ns, uk, nuk);
             write_to_disk(skeys, ns, spath);
         }
@@ -295,13 +295,13 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
     ScanOperator<TupleR> op1(std::move(b_cols), nr, nr);
     ScanOperator<TupleS> op2(std::move(p_cols), ns, ns);
 
-    op1.open(); op2.open();SortMergeJoin
+    op1.open(); op2.open();
     relation_r = op1.next();
     relation_s = op2.next();
     op1.close(); op2.close();
-exec_join
-    // adjust the match release_memratio
-    // if the match ratio is 1 out of M, 
+
+    // adjust the match ratio
+    // if the match ratio is 1 out of M,
     // then we randomly remove floor(|R|/M) elements from relation R (assuming M < |R|)
     // this is simulating the filtering before join
 #ifndef MR_FILTER_FK
@@ -309,7 +309,7 @@ exec_join
         if(args.selectivity >= args.nr) assert(false);
         relation_r.num_items /= args.selectivity;
     }
-    cout << "The effective |R| after adjusting the selectivity is " << relation_r.num_items << endl; 
+    cout << "The effective |R| after adjusting the selectivity is " << relation_r.num_items << endl;
 #endif
 
     release_mem(relation_r.select_vec);
@@ -364,7 +364,7 @@ void check_correctness(const struct join_args& args, TupleR& r, TupleS& s, Tout&
             checksum *= match_partner_per_key;
         }
     }
-    
+
     auto keys = new join_key_t[t.num_items];
     cudaMemcpy(keys, COL(t,0), sizeof(join_key_t)*t.num_items, cudaMemcpyDefault);
 
@@ -385,14 +385,14 @@ void check_correctness(const struct join_args& args, TupleR& r, TupleS& s, Tout&
             if(static_cast<col_t>(keys[i]) != vals[i]) {
                 cout << "[INCORRECT] Unmatched key and value\n";
                 cout << "The " << i << "-th value of column " << c.value+1 << " is " << vals[i];
-                cout << " but the key is " << keys[i] << endl; 
+                cout << " but the key is " << keys[i] << endl;
                 std::exit(-1);
             }
         }
     });
-    
+
     cout << "[CORRECT]\n";
-    
+
     delete [] keys;
     delete [] vals;
 #endif
@@ -421,7 +421,7 @@ ResultTuple exec_join(TupleR& relation_r, TupleS& relation_s, const struct join_
         impl = new SortHashJoin<TupleR, TupleS, ResultTuple>(relation_r, relation_s, first_bit, args.phj_log_part1+args.phj_log_part2, circular_buffer_size);
     } else if(args.algo == SMJI) {
         impl = new SortMergeJoinByIndex<TupleR, TupleS, ResultTuple, false>(relation_r, relation_s, circular_buffer_size);
-    } 
+    }
     else {
         std::cout << "Unsupported join algorithm\n";
         std::exit(-1);
@@ -439,7 +439,7 @@ void exp_stats(JoinImpl* impl, const struct join_args& args) {
     if(!args.output.empty()) {
         ofstream fout;
         fout.open(args.output, ios::app);
-        fout << get_utc_time() << ","SortMergeJoin
+        fout << get_utc_time() << ","
              << args.nr << "," << args.ns << ","
              << args.pr << "," << args.ps << ","
              << join_algo_name[args.algo] << ","
@@ -471,7 +471,7 @@ void run_test_multicols(const struct join_args& args) {
 
     JoinBase<ResultTuple>* impl;
     auto out = exec_join(relation_r, relation_s, args, impl);
-    
+
     cudaDeviceSynchronize();
 
     cout << "\nOutput Cardinality = " << out.num_items << endl;
@@ -576,7 +576,7 @@ void parse_args(int argc, char** argv, struct join_args& args) {
         case 'p':
             args.phj_log_part1 = atoi(optarg);
             continue;
-        case 'q': 
+        case 'q':
             args.phj_log_part2 = atoi(optarg);
             continue;
         case 'h':
@@ -644,6 +644,6 @@ int main(int argc, char** argv) {
     RUN_CASE(6, 6, 11);
     RUN_CASE(7, 7, 13);
 
-    
+
     return 0;
 }
