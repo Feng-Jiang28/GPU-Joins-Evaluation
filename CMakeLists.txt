@@ -22,7 +22,7 @@ include(fetch_dependencies.cmake)
 
 # Add CUDA and C++ source files separately
 set(CUDA_SOURCES
-        src/volcano/CudfJoin.cpp
+        src/volcano/join_exp.cu
 )
 
 # Create C++ object library
