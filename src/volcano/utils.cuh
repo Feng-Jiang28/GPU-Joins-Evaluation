@@ -142,7 +142,7 @@ __device__ __forceinline__ int get_cuda_tid() {
 __device__ __forceinline__ int nthreads() {
     return blockDim.x * gridDim.x;
 }
-
+/*
 template<typename T>
 void print_gpu_arr(const T* arr, size_t n, size_t offset=0) {
     T* temp = new T[n];
@@ -154,7 +154,7 @@ void print_gpu_arr(const T* arr, size_t n, size_t offset=0) {
     std::cout << std::endl;
     delete [] temp;
 }
-
+*/
 template<typename T>
 __global__ void fill_sequence(T* arr, const T start, const size_t N) {
     for(int t = get_cuda_tid(); t < N; t += nthreads()) {
