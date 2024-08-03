@@ -31,7 +31,7 @@ list(APPEND CUDF_CUDA_FLAGS
 
 # Add CUDA and C++ source files separately
 set(CUDA_SOURCES
-        src/volcano/join_exp.cu
+        src/volcano/join_exp.cpp
 
 )
 
