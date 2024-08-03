@@ -21,7 +21,7 @@
 #include "sort_hash_join.cuh"
 #include "experiment_util.cuh"
 #include "join_base.hpp"
-
+#include "CudfJoin.cpp"
 //  #define KEY_T_8B
 //  #define COL_T_8B
 
