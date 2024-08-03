@@ -1,59 +1,51 @@
+# Copyright (c) 2020-2024, NVIDIA CORPORATION.
+
 cmake_minimum_required(VERSION 3.26.4)
 
 project(
-        crystal
+        basic_example
         VERSION 0.0.1
         LANGUAGES CXX CUDA
 )
-
-# Set CUDA paths
-set(CUDA_PATH "/usr/local/cuda" CACHE PATH "Path to CUDA installation")
-set(CUDA_INC_PATH "${CUDA_PATH}/include")
-set(CUDA_BIN_PATH "${CUDA_PATH}/bin")
-
-# Set CUDA architecture
-set(SM_TARGETS "gencode=arch=compute_70,code=\"sm_70,compute_70\"")
 set(SM_DEF "-DSM700")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
-list(APPEND CUDA_NVCC_FLAGS ${SM_DEF})
-# Uncomment the following lines for A100
-# set(SM_TARGETS "-gencode=arch=compute_80,code=\"sm_80,compute_80\"")
-# set(SM_DEF "-DSM800")
+include(set_cuda_architecture.cmake)
 
-# Set CUDA flags
-set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}
-        --std=c++17
-        --expt-relaxed-constexpr
-        --expt-extended-lambda
-        --extended-lambda
-        ${SM_DEF}
-        -Xptxas="-v"
-        -lineinfo
-        -Xcudafe -\#
+# initialize cuda architecture
+rapids_cuda_init_architectures(basic_example)
+rapids_cuda_set_architectures(RAPIDS)
+
+include(fetch_dependencies.cmake)
+
+# Add CUDA and C++ source files separately
+set(CUDA_SOURCES
+        src/volcano/join_exp.cu
 )
 
-# Include directories
-include_directories(${CUDA_INC_PATH} cub src)
-
-# Find all CUDA source files
-file(GLOB_RECURSE CU_SOURCES "src/*.cu")
-
-# Create executable targets for each CUDA source file
-foreach(CU_SOURCE ${CU_SOURCES})
-    get_filename_component(CU_NAME ${CU_SOURCE} NAME_WE)
-    add_executable(${CU_NAME} ${CU_SOURCE})
-    set_target_properties(${CU_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-    target_compile_definitions(${CU_NAME} PRIVATE ${SM_DEF})  # Add this line
-    target_link_libraries(${CU_NAME} PRIVATE gomp)
-    install(TARGETS ${CU_NAME} DESTINATION bin)
-endforeach()
-
-# Custom targets
-add_custom_target(setup
-        COMMAND ${CMAKE_COMMAND} -E make_directory bin/volcano obj/volcano
+set(CPP_SOURCES
+        src/volcano/CudfJoin.cpp
 )
 
-add_custom_target(clean_all
-        COMMAND ${CMAKE_COMMAND} -E remove_directory bin
-        COMMAND ${CMAKE_COMMAND} -E remove_directory obj
-)
+# Create CUDA object library
+add_library(cuda_objs OBJECT ${CUDA_SOURCES})
+set_target_properties(cuda_objs PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+target_compile_definitions(cuda_objs PRIVATE ${SM_DEF})
+
+# Create C++ object library
+add_library(cpp_objs OBJECT ${CPP_SOURCES})
+target_link_libraries(cpp_objs PRIVATE cudf::cudf)
+target_compile_definitions(cpp_objs PRIVATE ${SM_DEF})
+
+# Create the main executable
+add_executable(basic_example $<TARGET_OBJECTS:cuda_objs> $<TARGET_OBJECTS:cpp_objs>)
+
+target_link_libraries(basic_example PRIVATE cudf::cudf)
+target_compile_features(basic_example PRIVATE cxx_std_17)
+target_compile_definitions(basic_example PRIVATE ${SM_DEF})
+
+install(TARGETS basic_example DESTINATION bin/examples/libcudf)
+install(FILES ${CMAKE_CURRENT_LIST_DIR}/4stock_5day.csv DESTINATION bin/examples/libcudf)

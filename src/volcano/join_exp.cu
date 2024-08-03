@@ -18,10 +18,10 @@
 #include "../data_gen/generator.cuh"
 #include "sort_merge_join.cuh"
 #include "partitioned_hash_join.cuh"
-#include "sort_hash_join.cuh"
+#include "sort_hash_jexec_joinoin.cuh"
 #include "experiment_util.cuh"
 #include "join_base.hpp"
-#include "CudfJoin.cpp"
+// #include "CudfJoin.cpp"
 //  #define KEY_T_8B
 //  #define COL_T_8B
 
@@ -43,13 +43,16 @@ enum Input {
 
 char join_algo_name[4][32] = {{"PHJ"}, {"SMJ"}, {"SHJ"}, {"SMJI"}};
 
-#define RUN_CASE(c1, c2, c3) { \
+#define RUN_CASE(c1// Explicit instantiation for types you'll use
+template void sort_on_gpu<int>(int* keys, int num_items);
+template void sort_on_gpu<long>(long *keys, int num_items);
+// Add other types as needed., c2, c3) { \
     if(args.pr+1 == c1 && args.ps+1 == c2) { \
         if(args.type == PK_FK || args.type == FK_FK) { \
             run_test_multicols<join_key_t, col_t, TU ## c1, TU ## c2, TU ## c3>(args); \
         } \
     } \
-}
+}f
 
 struct join_args {
     int nr {4096};
@@ -294,12 +297,12 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
     ScanOperator<TupleR> op1(std::move(b_cols), nr, nr);
     ScanOperator<TupleS> op2(std::move(p_cols), ns, ns);
 
-    op1.open(); op2.open();
+    op1.open(); op2.open();SortMergeJoin
     relation_r = op1.next();
     relation_s = op2.next();
     op1.close(); op2.close();
-
-    // adjust the match ratio
+exec_join
+    // adjust the match release_memratio
     // if the match ratio is 1 out of M, 
     // then we randomly remove floor(|R|/M) elements from relation R (assuming M < |R|)
     // this is simulating the filtering before join
@@ -438,7 +441,7 @@ void exp_stats(JoinImpl* impl, const struct join_args& args) {
     if(!args.output.empty()) {
         ofstream fout;
         fout.open(args.output, ios::app);
-        fout << get_utc_time() << ","
+        fout << get_utc_time() << ","SortMergeJoin
              << args.nr << "," << args.ns << ","
              << args.pr << "," << args.ps << ","
              << join_algo_name[args.algo] << ","

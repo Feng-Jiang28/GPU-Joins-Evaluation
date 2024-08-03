@@ -8,27 +8,27 @@ python exp/run_join_exp.py \
         -c exp/join_exp_config.csv \
         -y exp/join_runs.yaml \
         -e 0 1 2 3 4 \
-        -r $1 \
+        -r 1 \
         -p exp_results/gpu_join \
-        -d $2
+        -d 2
 
 python exp/run_join_exp.py \
         -b ./bin/volcano/join_exp_8b8b \
         -c exp/join_exp_config.csv \
         -y exp/join_runs.yaml \
         -e 5 \
-        -r $1 \
+        -r 1 \
         -p exp_results/gpu_join \
-        -d $2
+        -d 2
     
 python exp/run_join_exp.py \
         -b ./bin/volcano/join_exp_4b8b \
         -c exp/join_exp_config.csv \
         -y exp/join_runs.yaml \
         -e 6 \
-        -r $1 \
+        -r 1 \
         -p exp_results/gpu_join \
-        -d $2
+        -d 2
 
 echo "Run the sequence of joins from Section 5.2.8"
 for a in SMJ SMJI SHJ PHJ
