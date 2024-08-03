@@ -9,6 +9,9 @@ project(
 )
 set(SM_DEF "-DSM700")
 
+# Find OpenMP package
+find_package(OpenMP REQUIRED)
+
 include(set_cuda_architecture.cmake)
 
 # initialize cuda architecture
@@ -24,7 +27,7 @@ set(CUDA_SOURCES
 
 # Create C++ object library
 add_executable(basic_example ${CUDA_SOURCES})
-target_link_libraries(basic_example PRIVATE cudf::cudf)
+target_link_libraries(basic_example PRIVATE cudf::cudf OpenMP::OpenMP_CXX)
 target_compile_definitions(basic_example PRIVATE ${SM_DEF})
 target_compile_features(basic_example PRIVATE cxx_std_17)
 
