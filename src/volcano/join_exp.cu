@@ -12,7 +12,7 @@
 
 #include <cuda.h>
 
-#include "tuple.cuh"
+#include "tuple_wrapper.hpp"
 #include "utils.cuh"
 #include "operators.cuh"
 #include "../data_gen/generator.cuh"

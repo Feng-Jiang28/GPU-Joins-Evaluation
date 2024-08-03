@@ -15,7 +15,7 @@
 #include "utils.cuh"
 #include "../data_gen/generator.cuh"
 
-#define DECL_TUP(c, ...) using TU ## c = struct Chunk<__VA_ARGS__>;
+//#define DECL_TUP(c, ...) using TU ## c = struct Chunk<__VA_ARGS__>;
 
 enum join_type {
     PK_FK,

@@ -6,6 +6,8 @@
 #include <cassert>
 #include "utils.cuh"
 
+#define DECL_TUP(c, ...) using TU ## c = struct Chunk<__VA_ARGS__>;
+
 template<int N, typename T>
 __host__ __device__ auto get_typed_ptr(T t) {
     using full_chunk_t = typename T::full_chunk_t;
