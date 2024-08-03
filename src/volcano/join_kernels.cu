@@ -1,7 +1,8 @@
 // In join_kernels.cu
 #include "join_kernels.cuh"
+#include <cuda.h>
 
-template<tyname T>
+template<typename T>
 void sort_on_gpu(T* keys, int num_items){
     T* d_keys;
     T* d_sorted_keys;

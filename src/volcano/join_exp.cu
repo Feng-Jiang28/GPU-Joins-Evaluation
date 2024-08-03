@@ -18,9 +18,10 @@
 #include "../data_gen/generator.cuh"
 #include "sort_merge_join.cuh"
 #include "partitioned_hash_join.cuh"
-#include "sort_hash_jexec_joinoin.cuh"
+#include "sort_hash_join.cuh"
 #include "experiment_util.cuh"
 #include "join_base.hpp"
+#include "join_kernels.cu"
 // #include "CudfJoin.cpp"
 //  #define KEY_T_8B
 //  #define COL_T_8B
