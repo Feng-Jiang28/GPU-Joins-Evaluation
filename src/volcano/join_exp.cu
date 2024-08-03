@@ -44,10 +44,7 @@ enum Input {
 
 char join_algo_name[4][32] = {{"PHJ"}, {"SMJ"}, {"SHJ"}, {"SMJI"}};
 
-#define RUN_CASE(c1// Explicit instantiation for types you'll use
-template void sort_on_gpu<int>(int* keys, int num_items);
-template void sort_on_gpu<long>(long *keys, int num_items);
-// Add other types as needed., c2, c3) { \
+#define RUN_CASE(c1, c2, c3) { \
     if(args.pr+1 == c1 && args.ps+1 == c2) { \
         if(args.type == PK_FK || args.type == FK_FK) { \
             run_test_multicols<join_key_t, col_t, TU ## c1, TU ## c2, TU ## c3>(args); \
