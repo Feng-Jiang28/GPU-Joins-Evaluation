@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <fstream>
 
-#include "../volcano/operators.cuh"
+#include "operators.cuh"
 #include "experiment_util.cuh"
 
 
