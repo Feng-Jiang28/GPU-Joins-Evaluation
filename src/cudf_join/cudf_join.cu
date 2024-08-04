@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <tuple>
@@ -10,7 +11,7 @@
 #include "../volcano/experiment_util.cuh"
 
 using namespace std;
-
+/*
 enum Input {
     RelR,
     RelS,
@@ -345,9 +346,7 @@ void free_tuple_mem(TupleR r, TupleS s, TupleOut out){
     out.free_mem();
 }
 
-void say_hello(){
-    cout << "hello \n";
-}
+
 void prepare_running(int argc, char** argv) {
 #ifndef COL_T_8B
     using col_t = int;
@@ -365,4 +364,8 @@ void prepare_running(int argc, char** argv) {
 
     struct join_args args;
     parse_args(argc, argv, args);
+}
+*/
+void say_hello(){
+    cout << "hello \n";
 }

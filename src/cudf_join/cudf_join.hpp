@@ -91,6 +91,4 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
 
 inline std::string get_utc_time();
 
-void say_hello(){
-    cout << "hello2";
-}
+void say_hello();
