@@ -188,7 +188,8 @@ void run_rest_multicols(const struct join_args& args) {
 
 }
 
-int main(){
-    cout << "hello world! \n";
+int main(int argc, char** argv){
+    //cout << "hello world! \n";
+    prepare_running(int argc, char** argv);
     return 0;
 }
