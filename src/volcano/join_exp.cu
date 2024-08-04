@@ -13,7 +13,8 @@
 #include <cuda.h>
 
 #include "tuple_wrapper.hpp"
-#include "utils.cuh"
+//#include "utils.cuh"
+#include "utils_wrapper.hpp"
 #include "operators.cuh"
 #include "../data_gen/generator.cuh"
 #include "sort_merge_join.cuh"
