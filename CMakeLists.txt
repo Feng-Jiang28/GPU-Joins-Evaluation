@@ -55,7 +55,7 @@ set(CUDA_SOURCES
 
 # Create C++ object library
 add_executable(cuda_kernel ${CUDA_SOURCES})
-target_link_libraries(cuda_kernel PRIVATE OpenMP::OpenMP_CXX)
+target_link_libraries(cuda_kernel PRIVATE cudf::cudf OpenMP::OpenMP_CXX)
 target_compile_options(cuda_kernel PRIVATE
         "$<$<COMPILE_LANGUAGE:CUDA>:${CUDA_FLAGS}>"
         "$<$<COMPILE_LANGUAGE:CXX>:-O3>"
