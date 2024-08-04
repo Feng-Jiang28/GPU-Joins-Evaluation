@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cuda.h>
-//#include <cub/cub.cuh>
+#include <cub/cub.cuh>
 #include <iostream>
 
 #include "mem_manager.hpp"
@@ -106,7 +106,7 @@ inline void free_rmm_mempool(void* ptr, cudaStream_t stream) {
 // #define USE_CUDA_MEMALLOC
 template<typename T>
 inline void allocate_mem(T** ptr, bool clear = true, size_t sz = sizeof(T), cudaStream_t stream = 0) {
-    //assert(ptr != nullptr);
+    assert(ptr != nullptr);
 
 #ifdef USE_CUDA_MEMALLOC
     alloc_by_cuda((void**)ptr, clear, sz, stream);

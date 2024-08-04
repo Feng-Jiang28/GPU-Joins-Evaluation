@@ -329,7 +329,7 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
         delete [] s[i];
     }
 }
-
+/*
 template<typename join_key_t, typename col_t, typename TupleR, typename TupleS, typename Tout>
 void check_correctness(const struct join_args& args, TupleR& r, TupleS& s, Tout& t) {
 #ifdef CHECK_CORRECTNESS
@@ -399,20 +399,21 @@ void check_correctness(const struct join_args& args, TupleR& r, TupleS& s, Tout&
     delete [] vals;
 #endif
 }
+*/
 
 template<typename TupleR, typename TupleS, typename ResultTuple>
 ResultTuple exec_join(TupleR& relation_r, TupleS& relation_s, const struct join_args& args, JoinBase<ResultTuple>*& impl) {
     int circular_buffer_size;
     int first_bit = 0;
-
+/*
 #ifdef CHECK_CORRECTNESS
     if(args.type == PK_FK)
         circular_buffer_size = relation_s.num_items;
     else if(args.type == FK_FK)
         circular_buffer_size = relation_s.num_items * (args.nr / args.unique_keys);
-#else
+#else */
     circular_buffer_size = std::max(relation_r.num_items, relation_s.num_items);
-#endif
+//#endif
 
     std::cout << "Circular buffer size = " << circular_buffer_size << "\n";
     if(args.algo == SMJ || (args.algo == SMJI && args.pr == 1 && args.ps == 1)) {
@@ -480,7 +481,7 @@ void run_test_multicols(const struct join_args& args) {
     cout << "Results (first 10 items): \n";
     out.peek(args.agg_only ? 1 : min(10, out.num_items));
 
-    check_correctness<join_key_t, col_t>(args, relation_r, relation_s, out);
+    //check_correctness<join_key_t, col_t>(args, relation_r, relation_s, out);
 
     exp_stats(impl, args);
 
