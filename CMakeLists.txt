@@ -35,8 +35,7 @@ set(CUDA_SOURCES
 )
 
 set(CUDF_SOURCES
-    src/cudf_join/hpp.cpp
-
+    src/cudf_join/cudf_join.hpp
 )
 
 # Create C++ object library
