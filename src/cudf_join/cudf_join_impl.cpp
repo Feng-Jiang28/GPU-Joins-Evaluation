@@ -178,9 +178,6 @@ private:
 
 void write_csv(cudf::table_view const& tbl_view, std::string const& file_path)
 {
-    auto sink_info = cudf::io::sink_info(file_path);
-    auto builder   = cudf::io::csv_writer_options::builder(sink_info, tbl_view);
-    auto options   = builder.build();
-    cudf::io::write_csv(options);
+
 }
 
