@@ -12,7 +12,7 @@
 
 #include <cuda.h>
 
-#include "tuple.chu"
+#include "tuple.cuh"
 #include "utils.cuh"
 //#include "utils_wrapper.hpp"
 #include "operators.cuh"
