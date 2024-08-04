@@ -1,4 +1,23 @@
+#include <cudf/column/column.hpp>
+#include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
+#include <cudf/copying.hpp>
+#include <cudf/detail/null_mask.hpp>
+#include <cudf/detail/structs/utilities.hpp>
+#include <cudf/dictionary/encode.hpp>
+#include <cudf/join.hpp>
+#include <cudf/scalar/scalar_factories.hpp>
+#include <cudf/sorting.hpp>
 #include <cudf/table/table.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
+#include <cudf/utilities/default_stream.hpp>
+#include <cudf/utilities/error.hpp>
+
+#include <rmm/resource_ref.hpp>
+
+#include <limits>
+
 #include "join_base.hpp"
 #include <iostream>
 
@@ -22,7 +41,6 @@ public:
 
         // inner join return a tableview
         // cudf::table\ convert back to TupleOut
-
         TupleOut result;
         return result;
     }
@@ -31,10 +49,10 @@ public:
 
     }
 
-    //std::vector<float> all_stats() override{
+    std::vector<float> all_stats() override {
         // Return a vector of all relevant statistics
-    //}
-
+        return std::vector<float>();
+    }
 
 private:
     template <std::pair<std::unique_ptr<rmm::device_uvector<cudf::size_type>>,
