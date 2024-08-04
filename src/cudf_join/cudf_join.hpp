@@ -2,7 +2,6 @@
 #include <cassert>
 #include <iostream>
 #include "tuple_wrapper.hpp"
-#include "cudf_join_impl.cpp"
 #include <fstream>
 
 using namespace std;
@@ -133,6 +132,9 @@ void exp_stats(JoinImpl* impl, const struct join_args& args) {
         fout.close();
     }
 }
+
+template<typename TupleR, typename TupleS, typename ResultOut>
+ResultOut exec_join(TupleR r, TupleS s);
 
 template<typename join_key_t, typename col_t, typename TupleR, typename TupleS, typename ResultTuple>
 void run_test_multicols(const struct join_args& args) {

@@ -1,4 +1,3 @@
-/*
 #include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
 #include <cudf/column/column_view.hpp>
@@ -54,7 +53,6 @@ public:
     }
 
 private:
-/*
     template <std::pair<std::unique_ptr<rmm::device_uvector<cudf::size_type>>,
             std::unique_ptr<rmm::device_uvector<cudf::size_type>>> (*join_impl)(
             cudf::table_view const& left_keys,
@@ -155,29 +153,14 @@ private:
         TupleType result;
       return result;
     }
-
 };
-*/
 
-#include <cudf/column/column.hpp>
-#include <cudf/types.hpp>
-#include <cudf/column/column_factories.hpp>
-#include <cudf/scalar/scalar_factories.hpp>
-#include <cudf/table/table_view.hpp>
-#include <cudf/filling.hpp>
-#include <cudf/join.hpp>
-#include <cudf_test/testing_main.hpp>
-#include <cudf/io/csv.hpp>
-
-#include <rmm/cuda_device.hpp>
-#include <rmm/mr/device/cuda_memory_resource.hpp>
-#include <rmm/mr/device/device_memory_resource.hpp>
-#include <rmm/mr/device/pool_memory_resource.hpp>
-
-#include <memory>
-
-void write_csv(cudf::table_view const& tbl_view, std::string const& file_path)
-{
-
+template<typename TupleR, typename TupleS, typename ResultOut>
+ResultOut exec_join(TupleR r, TupleS s){
+    JoinBase<ResultOut>* impl = new CudfJoin(r, s);
+    auto out = impl => join();
+    delete impl;
+    return out;
 }
+
 
