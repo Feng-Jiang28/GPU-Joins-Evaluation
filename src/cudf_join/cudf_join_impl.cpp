@@ -1,10 +1,9 @@
 #include <cudf/table/table.hpp>
-//#include "cudf_join.hpp"
-//#include "../volcano/join_base.hpp"
+#include "join_base.hpp"
 #include <iostream>
 
 using namespace std;
-/*
+
 template<typename TupleR,
         typename TupleS,
         typename TupleOut>
@@ -38,7 +37,6 @@ public:
 
 
 private:
-/*
     template <std::pair<std::unique_ptr<rmm::device_uvector<cudf::size_type>>,
             std::unique_ptr<rmm::device_uvector<cudf::size_type>>> (*join_impl)(
             cudf::table_view const& left_keys,
@@ -85,8 +83,8 @@ private:
         return join_and_gather<cudf::inner_join>(
                 left_input, right_input, left_on, right_on, compare_nulls);
     }
-*/
-/*
+
+
 private:
     static constexpr auto r_cols = TupleR::num_cols;
     static constexpr auto s_cols = TupleS::num_cols;
@@ -188,4 +186,4 @@ void run_rest_multicols(const struct join_args& args) {
     exp_stats(impl, args);
 
 }
-*/
+

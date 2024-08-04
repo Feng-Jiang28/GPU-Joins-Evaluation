@@ -2,6 +2,7 @@
 #include <cassert>
 #include <iostream>
 #include  "tuple_wrapper.hpp"
+#include "cudf_join_impl.cpp"
 using namespace std;
 
 enum join_type {
@@ -106,6 +107,13 @@ void run_test_multicols(const struct join_args& args) {
     TupleS relation_s;
     prepare_workload<join_key_t, col_t>(args, relation_r, relation_s);
     ResultTuple out;
+
+    /*
+    cout << "\nOutput Cardinality = " << out.num_items << endl;
+    cout << "Results (first 10 items): \n";
+    out.peek(args.agg_only ? 1 : min(10, out.num_items));
+    */
+
     free_tuple_mem(relation_r, relation_s, out);
 }
 
