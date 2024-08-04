@@ -53,8 +53,9 @@ public:
         // Return a vector of all relevant statistics
         return std::vector<float>();
     }
-/*
+
 private:
+/*
     template <std::pair<std::unique_ptr<rmm::device_uvector<cudf::size_type>>,
             std::unique_ptr<rmm::device_uvector<cudf::size_type>>> (*join_impl)(
             cudf::table_view const& left_keys,
@@ -102,7 +103,7 @@ private:
                 left_input, right_input, left_on, right_on, compare_nulls);
     }
 
-
+*/
 private:
     static constexpr auto r_cols = TupleR::num_cols;
     static constexpr auto s_cols = TupleS::num_cols;
@@ -156,7 +157,6 @@ private:
       return result;
     }
 
- */
 };
 
 
