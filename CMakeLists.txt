@@ -21,13 +21,15 @@ rapids_cuda_set_architectures(RAPIDS)
 include(fetch_dependencies.cmake)
 
 # Expand CUDF_CUDA_FLAGS
-list(APPEND CUDF_CUDA_FLAGS
+list(APPEND CUDA_FLAGS
         --expt-extended-lambda
         --expt-relaxed-constexpr
         --extended-lambda
         -Xptxas="-v"
         -lineinfo
 )
+
+list(APPEND CUDF_CUDA_FLAGS --expt-extended-lambda --expt-relaxed-constexpr)
 
 # Add CUDA and C++ source files separately
 set(CUDA_SOURCES
@@ -42,7 +44,7 @@ set(CUDF_SOURCES
 add_executable(cudf_kernel ${CUDF_SOURCES})
 target_link_libraries(cudf_kernel PRIVATE cudf::cudf)
 target_compile_options(cudf_kernel PRIVATE
-        "$<$<COMPILE_LANGUAGE:CUDA>:${CUDF_CUDA_FLAGS}>"
+        "$<$<COMPILE_LANGUAGE:CUDA>:${CUDA_FLAGS}>"
 )
 
 target_compile_definitions(cudf_kernel PRIVATE ${SM_DEF})
