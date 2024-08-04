@@ -158,7 +158,7 @@ private:
 template<typename TupleR, typename TupleS, typename ResultOut>
 ResultOut exec_join(TupleR r, TupleS s){
     JoinBase<ResultOut>* impl = new CudfJoin(r, s);
-    auto out = impl => join();
+    auto out = impl->join();
     delete impl;
     return out;
 }
