@@ -92,3 +92,10 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
 inline std::string get_utc_time();
 */
 void say_hello();
+
+int main(int argc, char** argv){
+    //cout << "hello world! \n";
+    say_hello();
+    //prepare_running(argc, argv);
+    return 0;
+}
