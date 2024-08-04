@@ -31,20 +31,34 @@ list(APPEND CUDF_CUDA_FLAGS
 
 # Add CUDA and C++ source files separately
 set(CUDA_SOURCES
-        src/cudf_join/cudf_join.hpp
+        src/cudf_join/cudf_join_kernel.cu
+)
+
+set(CUDF_SOURCES
+    src/cudf_join/cudf_join_impl.cpp
 )
 
 # Create C++ object library
-add_executable(basic_example ${CUDA_SOURCES})
-target_link_libraries(basic_example PRIVATE cudf::cudf OpenMP::OpenMP_CXX)
-
-target_compile_options(basic_example PRIVATE
+add_executable(cuda_kernel ${CUDA_SOURCES})
+target_link_libraries(cuda_kernel PRIVATE cudf::cudf OpenMP::OpenMP_CXX)
+target_compile_options(cuda_kernel PRIVATE
         "$<$<COMPILE_LANGUAGE:CUDA>:${CUDF_CUDA_FLAGS}>"
         "$<$<COMPILE_LANGUAGE:CXX>:-O3>"
         "$<$<COMPILE_LANGUAGE:CUDA>:-O3>"
 )
+target_compile_definitions(cuda_kernel PRIVATE ${SM_DEF})
+target_compile_features(cuda_kernel PRIVATE cxx_std_17)
+install(TARGETS cuda_kernel DESTINATION bin/examples/libcudf)
 
-target_compile_definitions(basic_example PRIVATE ${SM_DEF})
-target_compile_features(basic_example PRIVATE cxx_std_17)
 
-install(TARGETS basic_example DESTINATION bin/examples/libcudf)
+# Create C++ object library
+add_executable(cudf_kernel ${CUDF_SOURCES})
+target_link_libraries(cudf_kernel PRIVATE cudf::cudf)
+target_compile_options(cudf_kernel PRIVATE
+        "$<$<COMPILE_LANGUAGE:CUDA>:${CUDF_CUDA_FLAGS}>"
+        "$<$<COMPILE_LANGUAGE:CXX>:-O3>"
+        "$<$<COMPILE_LANGUAGE:CUDA>:-O3>"
+)
+target_compile_definitions(cudf_kernel PRIVATE ${SM_DEF})
+target_compile_features(cudf_kernel PRIVATE cxx_std_17)
+install(TARGETS cudf_kernel DESTINATION bin/examples/libcudf)
