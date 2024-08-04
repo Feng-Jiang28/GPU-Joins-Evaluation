@@ -25,9 +25,7 @@
 
 using namespace std;
 
-template<typename TupleR,
-        typename TupleS,
-        typename TupleOut>
+template<typename TupleR, typename TupleS, typename TupleOut>
 class CudfJoin : public JoinBase<TupleOut>{
 static_assert(TupleR::num_cols >= 2 &&
                   TupleS::num_cols >= 2 &&
