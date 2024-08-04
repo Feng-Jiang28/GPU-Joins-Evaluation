@@ -8,8 +8,6 @@
 #include "../volcano/operators.cuh"
 #include "../volcano/experiment_util.cuh"
 
-
-#include "cudf_join.hpp"
 using namespace std;
 
 enum Input {
