@@ -12,7 +12,7 @@
 #include <cuda.h>
 
 #include "tuple.cuh"
-#include "../volcano/utils.cuh"
+#include "utils.cuh"
 #include "../data_gen/generator.cuh"
 
 /*
