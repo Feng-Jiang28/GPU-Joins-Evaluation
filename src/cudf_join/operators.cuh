@@ -12,7 +12,7 @@
 #include <cuda.h>
 #include <cub/cub.cuh> 
 
-#include "../volcano/tuple.cuh"
+#include "tuple.cuh"
 #include "../volcano/utils.cuh"
 #include "../volcano/join_base.hpp"
 #include "../volcano/partitioned_hash_join.cuh"

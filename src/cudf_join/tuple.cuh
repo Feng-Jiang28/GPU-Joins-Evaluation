@@ -6,6 +6,27 @@
 #include <cassert>
 #include "utils.cuh"
 
+#define DECL_TUP(c, ...) using TU ## c = struct Chunk<__VA_ARGS__>;
+
+#define repeat_2(x) x,x
+#define repeat_4(x) repeat_2(x),repeat_2(x)
+#define repeat_8(x) repeat_4(x),repeat_4(x)
+
+#define DECL_TUP_1_TO_8(join_key_t, join_val_t)  \
+DECL_TUP(1, join_key_t) \
+DECL_TUP(2, join_key_t, join_val_t) \
+DECL_TUP(3, join_key_t, join_val_t, join_val_t) \
+DECL_TUP(4, join_key_t, join_val_t, join_val_t, join_val_t) \
+DECL_TUP(5, join_key_t, join_val_t, join_val_t, join_val_t, join_val_t) \
+DECL_TUP(6, join_key_t, join_val_t, join_val_t, join_val_t, join_val_t, join_val_t) \
+DECL_TUP(7, join_key_t, join_val_t, join_val_t, join_val_t, join_val_t, join_val_t, join_val_t) \
+DECL_TUP(8, join_key_t, join_val_t, join_val_t, join_val_t, join_val_t, join_val_t, join_val_t, join_val_t) \
+DECL_TUP(9, join_key_t,  repeat_8(join_val_t)) \
+DECL_TUP(10, join_key_t, repeat_8(join_val_t), join_val_t) \
+DECL_TUP(11, join_key_t, repeat_8(join_val_t), repeat_2(join_val_t)) \
+DECL_TUP(12, join_key_t, repeat_8(join_val_t), repeat_2(join_val_t), join_val_t) \
+DECL_TUP(13, join_key_t, repeat_8(join_val_t), repeat_4(join_val_t)) \
+
 template<int N, typename T>
 __host__ __device__ auto get_typed_ptr(T t) {
     using full_chunk_t = typename T::full_chunk_t;

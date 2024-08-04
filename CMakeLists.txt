@@ -31,7 +31,7 @@ list(APPEND CUDF_CUDA_FLAGS
 
 # Add CUDA and C++ source files separately
 set(CUDA_SOURCES
-        src/cudf_join/main.cpp
+        src/cudf_join/cudf_join_impl.cpp
         src/cudf_join/cudf_join_kernel.cu
 
 )

@@ -8,7 +8,6 @@
 #include "operators.cuh"
 #include "experiment_util.cuh"
 
-
 #include "cudf_join.hpp"
 using namespace std;
 

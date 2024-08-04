@@ -11,10 +11,11 @@
 
 #include <cuda.h>
 
-#include "../volcano/tuple.cuh"
+#include "tuple.cuh"
 #include "../volcano/utils.cuh"
 #include "../data_gen/generator.cuh"
 
+/*
 #define DECL_TUP(c, ...) using TU ## c = struct Chunk<__VA_ARGS__>;
 
 #define repeat_2(x) x,x
@@ -35,6 +36,7 @@
     DECL_TUP(11, join_key_t, repeat_8(join_val_t), repeat_2(join_val_t)) \
     DECL_TUP(12, join_key_t, repeat_8(join_val_t), repeat_2(join_val_t), join_val_t) \
     DECL_TUP(13, join_key_t, repeat_8(join_val_t), repeat_4(join_val_t)) \
+*/
 
 template<class T>
 void load_column(const std::string& file_name, T* dst, const int N) {
