@@ -415,7 +415,7 @@ ResultTuple exec_join(TupleR& relation_r, TupleS& relation_s, const struct join_
         circular_buffer_size = relation_s.num_items * (args.nr / args.unique_keys);
 #else
     circular_buffer_size = std::max(relation_r.num_items, relation_s.num_items);
-
+#endif
 
     std::cout << "Circular buffer size = " << circular_buffer_size << "\n";
     if(args.algo == SMJ || (args.algo == SMJI && args.pr == 1 && args.ps == 1)) {
