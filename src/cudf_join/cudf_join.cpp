@@ -1,5 +1,7 @@
 #include <cudf/table/table.hpp>
 #include "cudf_join.hpp"
+#include <iostream>
+using namespace std;
 /*
 template<typename TupleR,
         typename TupleS,
