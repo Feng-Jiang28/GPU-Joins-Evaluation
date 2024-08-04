@@ -13,7 +13,6 @@
 #include <cudf/utilities/default_stream.hpp>
 #include <cudf/utilities/error.hpp>
 #include <rmm/resource_ref.hpp>
- */
 
 #include <cudf/table/table.hpp>
 #include <cudf/table/table_view.hpp>
@@ -103,7 +102,7 @@ private:
                 left_input, right_input, left_on, right_on, compare_nulls);
     }
 
-*/
+
 private:
     static constexpr auto r_cols = TupleR::num_cols;
     static constexpr auto s_cols = TupleS::num_cols;
@@ -158,6 +157,30 @@ private:
     }
 
 };
+*/
 
+#include <cudf/column/column.hpp>
+#include <cudf/types.hpp>
+#include <cudf/column/column_factories.hpp>
+#include <cudf/scalar/scalar_factories.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/filling.hpp>
+#include <cudf/join.hpp>
+#include <cudf_test/testing_main.hpp>
+#include <cudf/io/csv.hpp>
 
+#include <rmm/cuda_device.hpp>
+#include <rmm/mr/device/cuda_memory_resource.hpp>
+#include <rmm/mr/device/device_memory_resource.hpp>
+#include <rmm/mr/device/pool_memory_resource.hpp>
+
+#include <memory>
+
+void write_csv(cudf::table_view const& tbl_view, std::string const& file_path)
+{
+    auto sink_info = cudf::io::sink_info(file_path);
+    auto builder   = cudf::io::csv_writer_options::builder(sink_info, tbl_view);
+    auto options   = builder.build();
+    cudf::io::write_csv(options);
+}
 
