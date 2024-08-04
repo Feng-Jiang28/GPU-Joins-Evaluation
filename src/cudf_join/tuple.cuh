@@ -4,7 +4,7 @@
 #include <cuda.h>
 #include <tuple>
 #include <cassert>
-#include "utils.cuh"
+#include "../volcano/utils.cuh"
 
 #define DECL_TUP(c, ...) using TU ## c = struct Chunk<__VA_ARGS__>;
 
