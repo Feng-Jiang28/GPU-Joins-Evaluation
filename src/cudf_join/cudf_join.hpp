@@ -105,6 +105,8 @@ void run_test_multicols(const struct join_args& args) {
     TupleR relation_r;
     TupleS relation_s;
     prepare_workload<join_key_t, col_t>(args, relation_r, relation_s);
+    ResultTuple out;
+    free_tuple_mem(relation_r, relation_s, out);
 }
 
 int main(int argc, char** argv){
