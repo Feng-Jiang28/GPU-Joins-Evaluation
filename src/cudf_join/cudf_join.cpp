@@ -1,6 +1,5 @@
-
 #include <cudf/table/table.hpp>
-
+#include "cudf_join.hpp"
 
 template<typename TupleR,
         typename TupleS,
@@ -134,3 +133,56 @@ private:
       return result;
     }
 };
+
+
+template<typename JoinImpl>
+void exp_stats(JoinImpl* impl, const struct join_args& args) {
+    cout << "\n==== Statistics ==== \n";
+    impl->print_stats();
+    cout << "Peak memory used: " << mm->get_peak_mem_used() << " bytes\n";
+
+    if(!args.output.empty()) {
+        ofstream fout;
+        fout.open(args.output, ios::app);
+        fout << get_utc_time() << ","
+             << args.nr << "," << args.ns << ","
+             << args.pr << "," << args.ps << ","
+             << join_algo_name[args.algo] << ","
+             << (args.type == PK_FK ? "pk_fk," : "fk_fk,")
+             << args.unique_keys << ","
+             << (args.dist == UNIFORM ? "uniform," : "zipf,")
+             << args.zipf_factor << ","
+             << args.selectivity << ","
+             << (args.agg_only ? "aggregation," : "materialization,")
+             << args.phj_log_part1 << "," << args.phj_log_part2 << ","
+             << args.key_bytes << "," << args.val_bytes << ",";
+
+        auto stats = impl->all_stats();
+        for(auto t : stats) {
+            fout << t << ",";
+        }
+
+        fout << endl;
+        fout.close();
+    }
+}
+
+template<typename join_key_t, typename col_t, typename TupleR, typename TupleS, ResultTuple>
+void run_rest_multicols(const struct join_args& args) {
+    TupleR relation_r;
+    TupleS relation_s;
+
+    prepare_workload<join_key_t, col_t>(args, relation_r, relation_s);
+    auto out = exec_join(relation_r, relation_s, args, impl);
+    cout << "\nOutput Cardinality = " << out.num_items << endl;
+    cout << "Results (first 10 items): \n";
+    out.peek(args.agg_only ? 1 : min(10, out.num_items));
+    exp_stats(impl, args);
+
+}
+
+
+int main(){
+    cout << "hello world! \n";
+    return 0;
+}

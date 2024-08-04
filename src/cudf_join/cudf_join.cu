@@ -6,6 +6,7 @@
 #include <fstream>
 
 #include "../volcano/operators.cuh"
+#include "cudf_join.hpp"
 
 using namespace std;
 
@@ -401,7 +402,14 @@ void parse_args(int argc, char** argv, struct join_args& args) {
     args.print();
 }
 
-int main(int argc, char** argv) {
+template<typename TupleR, typename TupleS, typename TupleOut>
+void free_tuple_mem(TupleR r, TupleS s, TupleOut out){
+    r.free_mem();
+    s.free_mem();
+    out.free_mem();
+}
+
+void prepare_running(int argc, char** argv) {
 #ifndef COL_T_8B
     using col_t = int;
 #else
@@ -418,6 +426,4 @@ int main(int argc, char** argv) {
 
     struct join_args args;
     parse_args(argc, argv, args);
-
-    return 0;
 }
