@@ -145,7 +145,7 @@ template<typename JoinImpl>
 void exp_stats(JoinImpl* impl, const struct join_args& args) {
     cout << "\n==== Statistics ==== \n";
     impl->print_stats();
-    cout << "Peak memory used: " << mm->get_peak_mem_used() << " bytes\n";
+    //cout << "Peak memory used: " << mm->get_peak_mem_used() << " bytes\n";
 
     if(!args.output.empty()) {
         ofstream fout;
