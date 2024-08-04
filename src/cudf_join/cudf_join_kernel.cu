@@ -1,4 +1,3 @@
-/*
 #include <iostream>
 #include <vector>
 #include <tuple>
@@ -8,18 +7,16 @@
 
 #include "../volcano/operators.cuh"
 #include "../volcano/experiment_util.cuh"
-*/
+
 
 #include "cudf_join.hpp"
 using namespace std;
-/*
+
 enum Input {
     RelR,
     RelS,
     UniqueKeys
 };
-
-
 
 std::string get_path_name(enum Input table, const struct join_args& args) {
     auto nr = args.nr;
@@ -366,7 +363,7 @@ void prepare_running(int argc, char** argv) {
     struct join_args args;
     parse_args(argc, argv, args);
 }
-*/
+
 void say_hello(){
     cout << "hello \n";
 }

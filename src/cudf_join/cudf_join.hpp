@@ -3,7 +3,7 @@
 #include <iostream>
 
 using namespace std;
-/*
+
 enum join_type {
     PK_FK,
     FK_FK,
@@ -90,12 +90,12 @@ template<typename join_key_t, typename col_t, typename TupleR, typename TupleS>
 void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& relation_s);
 
 inline std::string get_utc_time();
-*/
+
 void say_hello();
 
 int main(int argc, char** argv){
     //cout << "hello world! \n";
     say_hello();
-    //prepare_running(argc, argv);
+    prepare_running(argc, argv);
     return 0;
 }
