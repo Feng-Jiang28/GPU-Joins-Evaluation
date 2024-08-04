@@ -1,6 +1,17 @@
 #pragma once
 #include <iostream>
 
+enum join_type {
+    PK_FK,
+    FK_FK,
+    NOT_SUPPORTED_JOIN_TYPE
+};
+
+enum dist_type {
+    UNIFORM,
+    ZIPF
+};
+
 void prepare_running(int argc, char** argv);
 
 template<typename TupleR, typename TupleS, typename TupleOut>
