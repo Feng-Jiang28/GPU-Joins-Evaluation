@@ -4,7 +4,7 @@
 #include <iostream>
 
 using namespace std;
-
+/*
 template<typename TupleR,
         typename TupleS,
         typename TupleOut>
@@ -86,6 +86,7 @@ private:
                 left_input, right_input, left_on, right_on, compare_nulls);
     }
 */
+/*
 private:
     static constexpr auto r_cols = TupleR::num_cols;
     static constexpr auto s_cols = TupleS::num_cols;
@@ -187,7 +188,7 @@ void run_rest_multicols(const struct join_args& args) {
     exp_stats(impl, args);
 
 }
-
+*/
 int main(int argc, char** argv){
     //cout << "hello world! \n";
     say_hello();
