@@ -1,6 +1,6 @@
 #include <cudf/table/table.hpp>
 #include "cudf_join.hpp"
-
+/*
 template<typename TupleR,
         typename TupleS,
         typename TupleOut>
@@ -180,8 +180,7 @@ void run_rest_multicols(const struct join_args& args) {
     exp_stats(impl, args);
 
 }
-
-
+*/
 int main(){
     cout << "hello world! \n";
     return 0;
