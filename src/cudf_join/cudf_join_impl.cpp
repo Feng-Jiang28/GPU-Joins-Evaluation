@@ -53,7 +53,7 @@ public:
         // Return a vector of all relevant statistics
         return std::vector<float>();
     }
-
+/*
 private:
     template <std::pair<std::unique_ptr<rmm::device_uvector<cudf::size_type>>,
             std::unique_ptr<rmm::device_uvector<cudf::size_type>>> (*join_impl)(
@@ -156,3 +156,6 @@ private:
       return result;
     }
 };
+
+
+ */
