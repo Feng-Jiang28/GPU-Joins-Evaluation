@@ -3,6 +3,7 @@
 #include <iostream>
 #include "tuple_wrapper.hpp"
 #include <fstream>
+#include <cuda.h>
 
 using namespace std;
 
