@@ -39,6 +39,7 @@ set(CUDF_SOURCES
 # Add CUDA and C++ source files separately
 set(CUDA_SOURCES
         src/cudf_join/cudf_join_kernel.cu
+        src/cudf_join/cudf_join_impl.cpp
 )
 
 # Create C++ object library
