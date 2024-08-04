@@ -6,7 +6,7 @@
 #include <fstream>
 
 #include "../volcano/operators.cuh"
-#include "../volcano/experiment_util.cuh"
+#include "experiment_util.cuh"
 
 
 #include "cudf_join.hpp"
