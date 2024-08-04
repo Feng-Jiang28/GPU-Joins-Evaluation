@@ -2,8 +2,9 @@
 #include <cassert>
 #include <iostream>
 #include "tuple_wrapper.hpp"
-#include "cudf_join_impl.cpp"
+//#include "cudf_join_impl.cpp"
 #include <fstream>
+
 using namespace std;
 
 enum join_type {
