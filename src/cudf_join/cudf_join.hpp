@@ -25,6 +25,14 @@ enum join_algo {
     UnsupportedJoinAlgo
 };
 
+#define RUN_CASE(c1, c2, c3) { \
+    if(args.pr+1 == c1 && args.ps+1 == c2) { \
+        if(args.type == PK_FK || args.type == FK_FK) { \
+            run_test_multicols<join_key_t, col_t, TU ## c1, TU ## c2, TU ## c3>(args); \
+        } \
+    } \
+}
+
 struct join_args {
     int nr {4096};
     int ns {4096};
@@ -81,7 +89,7 @@ struct join_args {
 
 };
 
-void prepare_running(int argc, char** argv);
+//void prepare_running(int argc, char** argv);
 
 template<typename TupleR, typename TupleS, typename TupleOut>
 void free_tuple_mem(TupleR r, TupleS s, TupleOut out);
@@ -91,8 +99,13 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
 
 inline std::string get_utc_time();
 
-void say_hello();
 
+template<typename join_key_t, typename col_t, typename TupleR, typename TupleS, typename ResultTuple>
+void run_test_multicols(const struct join_args& args) {
+    TupleR relation_r;
+    TupleS relation_s;
+    prepare_workload<join_key_t, col_t>(args, relation_r, relation_s);
+}
 
 int main(int argc, char** argv){
     //cout << "hello world! \n";
@@ -107,9 +120,30 @@ int main(int argc, char** argv){
 #else
     using join_key_t = long;
 #endif
-
     DECL_TUP_1_TO_8(join_key_t, col_t);
-    say_hello();
-    prepare_running(argc, argv);
+    //prepare_running(argc, argv);
+    struct join_args args;
+    // increasing number of payloads in FK table
+    RUN_CASE(2, 3, 4);
+    RUN_CASE(2, 4, 5);
+    RUN_CASE(2, 5, 6);
+    RUN_CASE(2, 6, 7);
+    RUN_CASE(2, 7, 8);
+
+    // increasing number of payloads in FK table
+    RUN_CASE(3, 2, 4);
+    RUN_CASE(4, 2, 5);
+    RUN_CASE(5, 2, 6);
+    RUN_CASE(6, 2, 7);
+    RUN_CASE(7, 2, 8);
+
+    // both sides have payload columns to materialize
+    RUN_CASE(2, 2, 3);
+    RUN_CASE(3, 3, 5);
+    RUN_CASE(4, 4, 7);
+    RUN_CASE(5, 5, 9);
+    RUN_CASE(6, 6, 11);
+    RUN_CASE(7, 7, 13);
+
     return 0;
 }

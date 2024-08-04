@@ -342,27 +342,3 @@ void free_tuple_mem(TupleR r, TupleS s, TupleOut out){
     s.free_mem();
     out.free_mem();
 }
-
-
-void prepare_running(int argc, char** argv) {
-#ifndef COL_T_8B
-    using col_t = int;
-#else
-    using col_t = long;
-#endif
-
-#ifndef KEY_T_8B
-    using join_key_t = int;
-#else
-    using join_key_t = long;
-#endif
-
-    DECL_TUP_1_TO_8(join_key_t, col_t)
-
-    struct join_args args;
-    parse_args(argc, argv, args);
-}
-
-void say_hello(){
-    cout << "hello \n";
-}
