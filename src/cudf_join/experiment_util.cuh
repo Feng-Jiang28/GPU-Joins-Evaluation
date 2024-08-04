@@ -12,7 +12,7 @@
 #include <cuda.h>
 
 #include "../volcano/tuple.cuh"
-#include "../vaolcano/utils.cuh"
+#include "../volcano/utils.cuh"
 #include "../data_gen/generator.cuh"
 
 #define DECL_TUP(c, ...) using TU ## c = struct Chunk<__VA_ARGS__>;
