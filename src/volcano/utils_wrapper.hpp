@@ -1,7 +1,5 @@
 #ifndef UTILS_WRAPPER_H
 #define UTILS_WRAPPER_H
-#include "utils.cuh"
-#include <iostream>
 #include "mem_manager.hpp"
 #include <cuda.h>
 // Declare functions you want to use in .cpp files
