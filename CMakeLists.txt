@@ -31,6 +31,11 @@ list(APPEND CUDA_FLAGS
 
 list(APPEND CUDF_CUDA_FLAGS --expt-extended-lambda --expt-relaxed-constexpr)
 
+#set(CUDF_SOURCES
+#        src/cudf_join/cudf_join_kernel.cu
+#        src/cudf_join/cudf_join_impl.cpp
+#)
+
 # Add CUDA and C++ source files separately
 set(CUDA_SOURCES
         src/cudf_join/cudf_join_kernel.cu
@@ -38,15 +43,15 @@ set(CUDA_SOURCES
 )
 
 # Create C++ object library
-add_executable(cudf_kernel ${CUDF_SOURCES})
-target_compile_features(cudf_kernel PRIVATE cxx_std_17)
-target_link_libraries(cudf_kernel PRIVATE cudf::cudf)
-target_compile_options(cudf_kernel PRIVATE
-        "$<$<COMPILE_LANGUAGE:CUDA>:${CUDF_CUDA_FLAGS}>"
-)
-target_compile_definitions(cudf_kernel PRIVATE ${SM_DEF})
-target_compile_features(cudf_kernel PRIVATE cxx_std_17)
-install(TARGETS cudf_kernel DESTINATION bin/examples/libcudf)
+#add_executable(cudf_kernel ${CUDF_SOURCES})
+#target_compile_features(cudf_kernel PRIVATE cxx_std_17)
+#target_link_libraries(cudf_kernel PRIVATE cudf::cudf)
+#target_compile_options(cudf_kernel PRIVATE
+#        "$<$<COMPILE_LANGUAGE:CUDA>:${CUDF_CUDA_FLAGS}>"
+#)
+#target_compile_definitions(cudf_kernel PRIVATE ${SM_DEF})
+#target_compile_features(cudf_kernel PRIVATE cxx_std_17)
+#install(TARGETS cudf_kernel DESTINATION bin/examples/libcudf)
 
 # Create C++ object library
 add_executable(cuda_kernel ${CUDA_SOURCES})
