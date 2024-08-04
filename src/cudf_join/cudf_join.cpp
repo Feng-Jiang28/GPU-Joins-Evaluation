@@ -152,8 +152,7 @@ void exp_stats(JoinImpl* impl, const struct join_args& args) {
         fout.open(args.output, ios::app);
         fout << get_utc_time() << ","
              << args.nr << "," << args.ns << ","
-             << args.pr << "," << args.ps << ","
-             << join_algo_name[args.algo] << ","
+             << args.pr << "," << args.ps << ", cudf join"
              << (args.type == PK_FK ? "pk_fk," : "fk_fk,")
              << args.unique_keys << ","
              << (args.dist == UNIFORM ? "uniform," : "zipf,")
@@ -173,12 +172,14 @@ void exp_stats(JoinImpl* impl, const struct join_args& args) {
     }
 }
 
-template<typename join_key_t, typename col_t, typename TupleR, typename TupleS, ResultTuple>
+template<typename join_key_t, typename col_t, typename TupleR, typename TupleS, typename ResultTuple>
 void run_rest_multicols(const struct join_args& args) {
     TupleR relation_r;
     TupleS relation_s;
 
     prepare_workload<join_key_t, col_t>(args, relation_r, relation_s);
+
+    JoinBase<ResultTuple>* impl;
     auto out = exec_join(relation_r, relation_s, args, impl);
     cout << "\nOutput Cardinality = " << out.num_items << endl;
     cout << "Results (first 10 items): \n";

@@ -7,6 +7,7 @@
 
 #include "../volcano/operators.cuh"
 #include "cudf_join.hpp"
+#include "../volcano/experiment_util.cuh"
 
 using namespace std;
 
