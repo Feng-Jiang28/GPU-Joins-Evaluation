@@ -16,6 +16,7 @@
 //#include "utils.cuh"
 #include "utils_wrapper.hpp"
 //#include "operators.cuh"
+#include "operators_wrapper.hpp"
 #include "../data_gen/generator.cuh"
 #include "sort_merge_join.cuh"
 #include "partitioned_hash_join.cuh"
