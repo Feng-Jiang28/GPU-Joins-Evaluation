@@ -3,6 +3,7 @@
 #include <iostream>
 #include "tuple_wrapper.hpp"
 #include "cudf_join_impl.cpp"
+#include <fstream>
 using namespace std;
 
 enum join_type {
@@ -100,6 +101,37 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
 
 inline std::string get_utc_time();
 
+
+template<typename JoinImpl>
+void exp_stats(JoinImpl* impl, const struct join_args& args) {
+    cout << "\n==== Statistics ==== \n";
+    impl->print_stats();
+    //cout << "Peak memory used: " << mm->get_peak_mem_used() << " bytes\n";
+
+    if(!args.output.empty()) {
+        ofstream fout;
+        fout.open(args.output, ios::app);
+        fout << get_utc_time() << ","
+             << args.nr << "," << args.ns << ","
+             << args.pr << "," << args.ps << ", cudf join"
+             << (args.type == PK_FK ? "pk_fk," : "fk_fk,")
+             << args.unique_keys << ","
+             << (args.dist == UNIFORM ? "uniform," : "zipf,")
+             << args.zipf_factor << ","
+             << args.selectivity << ","
+             << (args.agg_only ? "aggregation," : "materialization,")
+             << args.phj_log_part1 << "," << args.phj_log_part2 << ","
+             << args.key_bytes << "," << args.val_bytes << ",";
+
+        auto stats = impl->all_stats();
+        for(auto t : stats) {
+            fout << t << ",";
+        }
+
+        fout << endl;
+        fout.close();
+    }
+}
 
 template<typename join_key_t, typename col_t, typename TupleR, typename TupleS, typename ResultTuple>
 void run_test_multicols(const struct join_args& args) {
