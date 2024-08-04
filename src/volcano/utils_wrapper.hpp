@@ -6,6 +6,6 @@
 
 // Forward declaration of the release_mem template function
 template<typename T>
-void release_mem(T* ptr, cudaStream_t stream = 0);
+void release_mem(T* ptr, cudaStream_t stream);
 
 #endif
