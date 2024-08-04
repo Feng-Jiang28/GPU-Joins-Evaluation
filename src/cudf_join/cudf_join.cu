@@ -345,6 +345,9 @@ void free_tuple_mem(TupleR r, TupleS s, TupleOut out){
     out.free_mem();
 }
 
+void say_hello(){
+    cout << "hello \n";
+}
 void prepare_running(int argc, char** argv) {
 #ifndef COL_T_8B
     using col_t = int;

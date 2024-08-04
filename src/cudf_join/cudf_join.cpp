@@ -190,6 +190,7 @@ void run_rest_multicols(const struct join_args& args) {
 
 int main(int argc, char** argv){
     //cout << "hello world! \n";
-    prepare_running(argc, argv);
+    say_hello();
+    //prepare_running(argc, argv);
     return 0;
 }
