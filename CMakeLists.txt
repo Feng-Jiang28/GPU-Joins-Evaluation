@@ -53,5 +53,9 @@ install(TARGETS cuda_kernel DESTINATION bin/examples/libcudf)
 # Create C++ object library
 add_executable(cudf_kernel ${CUDF_SOURCES})
 target_link_libraries(cudf_kernel PRIVATE cudf::cudf)
+target_compile_options(cudf_kernel PRIVATE
+        "$<$<COMPILE_LANGUAGE:CUDA>:${CUDF_CUDA_FLAGS}>"
+)
+target_compile_definitions(cudf_kernel PRIVATE ${SM_DEF})
 target_compile_features(cudf_kernel PRIVATE cxx_std_17)
 install(TARGETS cudf_kernel DESTINATION bin/examples/libcudf)
