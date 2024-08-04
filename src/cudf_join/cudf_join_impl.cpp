@@ -156,21 +156,3 @@ private:
       return result;
     }
 };
-
-
-template<typename join_key_t, typename col_t, typename TupleR, typename TupleS, typename ResultTuple>
-void run_rest_multicols(const struct join_args& args) {
-    TupleR relation_r;
-    TupleS relation_s;
-
-    prepare_workload<join_key_t, col_t>(args, relation_r, relation_s);
-
-    JoinBase<ResultTuple>* impl;
-    auto out = exec_join(relation_r, relation_s, args, impl);
-    cout << "\nOutput Cardinality = " << out.num_items << endl;
-    cout << "Results (first 10 items): \n";
-    out.peek(args.agg_only ? 1 : min(10, out.num_items));
-    exp_stats(impl, args);
-
-}
-
