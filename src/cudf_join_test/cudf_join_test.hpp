@@ -31,7 +31,7 @@ int main(int argc, char const** argv) {
 
     cout << table_path_r << " : " << table_path_s << "\n";
 
-    auto const mr_name std::string("cuda");
+    auto const mr_name = string("cuda");
 
     auto resource = create_memory_resource(mr_name);
     rmm::mr::set_current_device_resource(resouce.get());
