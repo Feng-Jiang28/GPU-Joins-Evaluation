@@ -39,8 +39,8 @@ list(APPEND CUDF_CUDA_FLAGS --expt-extended-lambda --expt-relaxed-constexpr)
 
 # Add CUDA and C++ source files separately
 set(CUDA_SOURCES
-        #src/cudf_join/cudf_join_kernel.cu
-        src/cudf_join_test/cudf_join_impl.cpp
+        src/cudf_join/cudf_join_kernel.cu
+        #src/cudf_join_test/cudf_join_impl.cpp
 )
 
 # Create C++ object library
