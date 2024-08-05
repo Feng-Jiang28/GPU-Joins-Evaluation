@@ -7,7 +7,7 @@
 
 #include "operators.cuh"
 #include "experiment_util.cuh"
-
+#include "tuple_wrapper.hpp"
 #include "cudf_join.hpp"
 using namespace std;
 
@@ -16,6 +16,8 @@ enum Input {
     RelS,
     UniqueKeys
 };
+
+
 
 std::string get_path_name(enum Input table, const struct join_args& args) {
     auto nr = args.nr;

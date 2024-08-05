@@ -3,7 +3,7 @@
 #include <iostream>
 #include "tuple_wrapper.hpp"
 #include <fstream>
-#include <cuda.h>
+#include <cudf/join.hpp>
 
 using namespace std;
 
@@ -97,6 +97,7 @@ struct join_args {
 template<typename TupleR, typename TupleS, typename TupleOut>
 void free_tuple_mem(TupleR r, TupleS s, TupleOut out);
 
+
 template<typename join_key_t, typename col_t, typename TupleR, typename TupleS>
 void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& relation_s);
 
@@ -134,8 +135,8 @@ void exp_stats(JoinImpl* impl, const struct join_args& args) {
     }
 }
 
-template<typename TupleR, typename TupleS, typename ResultOut>
-ResultOut exec_join(TupleR r, TupleS s);
+//template<typename TupleR, typename TupleS, typename ResultOut>
+//ResultOut exec_join(TupleR r, TupleS s);
 
 template<typename join_key_t, typename col_t, typename TupleR, typename TupleS, typename ResultTuple>
 void run_test_multicols(const struct join_args& args) {
