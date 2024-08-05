@@ -87,5 +87,8 @@ int main(int argc, char const** argv) {
 
     auto result = inner_join(table_r, table_s, {0, 1}, {0, 1}, cudf::null_equality::EQUAL);
 
+    std::cout << "table_r: " << result.num_rows() << " rows " << result.num_columns()
+         << " columns\n";
+
     return 0;
 }
