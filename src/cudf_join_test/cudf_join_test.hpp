@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cudf/column/column.hpp>
 
+using namespace std;
 // cudf hash inner join function
 
 // read from disk function
@@ -9,7 +10,7 @@
 
 int main(int argc, char const** argv) {
     if (argc < 2){
-        std::cout << "required parameter: file path \n";
+        cout << "required parameter: file path \n";
         return 1;
     }
 
