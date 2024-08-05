@@ -3,7 +3,7 @@
 #include <iostream>
 #include "tuple_wrapper.hpp"
 #include <fstream>
-#include <cudf/join.hpp>
+#include <cudf/column/column.hpp>
 
 using namespace std;
 
