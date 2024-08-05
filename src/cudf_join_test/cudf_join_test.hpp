@@ -31,12 +31,14 @@ int main(int argc, char const** argv) {
 
     cout << table_path_r << " : " << table_path_s << "\n";
 
-    auto resource = create_memory_resource("cuda");
+    auto const mr_name std::string("cuda");
+
+    auto resource = create_memory_resource(mr_name);
     rmm::mr::set_current_device_resource(resouce.get());
 
     auto r_result = [table_path_r]{
         cudf::io::csv_reader_options in_opts =
-            cudf::io::csv_reader_options::builder(cudf::io::source_info{csv_file}).header(-1);
+            cudf::io::csv_reader_options::builder(cudf::io::source_info{table_path_r}).header(-1);
         return cudf::io::read_csv(in_opts).tbl;
     }();
 
