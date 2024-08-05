@@ -16,6 +16,8 @@
 
 #include <rmm/resource_ref.hpp>
 
+#include "cudf_join_test.hpp"
+
 #include <limits>
 
 template <std::pair<std::unique_ptr<rmm::device_uvector<cudf::size_type>>,
