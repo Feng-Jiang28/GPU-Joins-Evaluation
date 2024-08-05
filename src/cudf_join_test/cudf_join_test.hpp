@@ -85,10 +85,7 @@ int main(int argc, char const** argv) {
     std::cout << "table_s: " << table_s.num_rows() << " rows " << table_s.num_columns()
            << " columns\n";
 
-
-
-
-
+    auto result = inner_join(table_r, table_s, {0, 1, 2}, {0, 1, 2});
 
     return 0;
 }
