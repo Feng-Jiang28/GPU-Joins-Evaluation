@@ -57,7 +57,7 @@ int main(int argc, char const** argv) {
     auto const mr_name = string("cuda");
 
     auto resource = create_memory_resource(mr_name);
-    rmm::mr::set_current_device_resource(resouce.get());
+    rmm::mr::set_current_device_resource(resource.get());
 
     auto r_result = [table_path_r]{
         cudf::io::csv_reader_options in_opts =
