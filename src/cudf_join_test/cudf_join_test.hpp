@@ -1,4 +1,4 @@
-#progma once
+#pragma once
 
 #include <iostream>
 #include <cudf/column/column.hpp>
