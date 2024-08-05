@@ -22,7 +22,7 @@ std::unique_ptr<cudf::table> inner_join(
      cudf::table_view const& right_input,
      std::vector<cudf::size_type> const& left_on,
      std::vector<cudf::size_type> const& right_on,
-     cudf::null_equality compare_nulls = cudf::null_equality::EQUAL);
+     cudf::null_equality compare_nulls );
 
 // read from disk function
 
