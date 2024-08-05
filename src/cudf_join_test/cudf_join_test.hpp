@@ -19,6 +19,29 @@ using namespace std;
 
 // read from disk function
 
+/**
+ * @brief Create CUDA memory resource
+ */
+auto make_cuda_mr() { return std::make_shared<rmm::mr::cuda_memory_resource>(); }
+
+/**
+ * @brief Create a pool device memory resource
+ */
+auto make_pool_mr()
+{
+    return rmm::mr::make_owning_wrapper<rmm::mr::pool_memory_resource>(
+      make_cuda_mr(), rmm::percent_of_free_device_memory(50));
+}
+
+/**
+ * @brief Create memory resource for libcudf functions
+ */
+std::shared_ptr<rmm::mr::device_memory_resource> create_memory_resource(std::string const& name)
+{
+    if (name == "pool") { return make_pool_mr(); }
+    return make_cuda_mr();
+}
+
 
 int main(int argc, char const** argv) {
     if (argc < 3){
