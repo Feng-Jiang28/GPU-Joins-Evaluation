@@ -61,13 +61,13 @@ int main(int argc, char const** argv) {
 
     auto r_result = [table_path_r]{
         cudf::io::csv_reader_options in_opts =
-            cudf::io::csv_reader_options::builder(cudf::io::source_info{"src/names.csv "}).header(-1);
+            cudf::io::csv_reader_options::builder(cudf::io::source_info{table_path_r}).header(-1);
         return cudf::io::read_csv(in_opts).tbl;
     }();
 
     auto s_result = [table_path_s]{
         cudf::io::csv_reader_options in_opts =
-          cudf::io::csv_reader_options::builder(cudf::io::source_info{"src/names.csv "}).header(-1);
+          cudf::io::csv_reader_options::builder(cudf::io::source_info{table_path_s}).header(-1);
         return cudf::io::read_csv(in_opts).tbl;
     }();
 
