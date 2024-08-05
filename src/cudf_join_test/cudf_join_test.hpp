@@ -71,6 +71,14 @@ int main(int argc, char const** argv) {
         return cudf::io::read_csv(in_opts).tbl;
     }();
 
+    auto const table_r = r_result -> view();
+    std::cout << "table_r: " << table_r.num_rows() << " rows " << table_r.num_columns()
+           << " columns\n";
+    auto const table_s = s_result -> view();
+    std::cout << "table_s: " << table_s.num_rows() << " rows " << table_s.num_columns()
+           << " columns\n";
+
+
 
     return 0;
 }
