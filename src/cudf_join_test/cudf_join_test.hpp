@@ -15,7 +15,15 @@
 #include <string>
 
 using namespace std;
+
 // cudf hash inner join function
+std::unique_ptr<cudf::table> inner_join(
+    cudf::table_view const& left_input,
+     cudf::table_view const& right_input,
+     std::vector<cudf::size_type> const& left_on,
+     std::vector<cudf::size_type> const& right_on,
+     cudf::null_equality compare_nulls = cudf::null_equality::EQUAL)
+);
 
 // read from disk function
 
@@ -77,6 +85,9 @@ int main(int argc, char const** argv) {
     auto const table_s = s_result -> view();
     std::cout << "table_s: " << table_s.num_rows() << " rows " << table_s.num_columns()
            << " columns\n";
+
+
+
 
 
 
