@@ -9,7 +9,9 @@
 #include <rmm/mr/device/owning_wrapper.hpp>
 #include <rmm/mr/device/pool_memory_resource.hpp>
 
+#include <chrono>
 #include <iostream>
+#include <memory>
 #include <string>
 
 using namespace std;
