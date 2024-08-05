@@ -15,7 +15,7 @@ int main(int argc, char const** argv) {
         return 1;
     }
 
-    auto const table_path_r = string(argv[1]);
+    auto const table_path_r = argv[1];
     auto const table_path_s = string(argv[2]);
 
     cout << table_path_r << " : " << table_path_s << "\n";
