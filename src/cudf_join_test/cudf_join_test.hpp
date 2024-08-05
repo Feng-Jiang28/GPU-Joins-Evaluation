@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <string>
 #include <cudf/column/column.hpp>
 
 using namespace std;
@@ -9,13 +10,13 @@ using namespace std;
 
 
 int main(int argc, char const** argv) {
-    if (argc < 2){
+    if (argc < 3){
         cout << "required parameter: file path \n";
         return 1;
     }
 
-    auto const talbe_path_r = std::string(argv[0]);
-    auto const table_path_s = std::string(argv[1]);
+    auto const table_path_r = string(argv[1]);
+    auto const table_path_s = string(argv[2]);
 
     cout << table_path_r << " : " << table_path_s << "\n";
 
