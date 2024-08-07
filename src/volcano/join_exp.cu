@@ -164,7 +164,10 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
 
     std::string rpath = get_path_name(RelR, args);
     std::string spath = get_path_name(RelS, args);
-    
+
+    std::cout << "R path: " << rpath << " \n";
+    std::cout << "S path: " << spath << " \n";
+
     if(args.type == PK_FK) {
         // create relation R
         if(input_exists(rpath)) {
@@ -290,6 +293,12 @@ void prepare_workload(const struct join_args& args, TupleR& relation_r, TupleS& 
 
     auto b_cols = std::tuple_cat(std::make_tuple(rkeys), std::tuple_cat(r));
     auto p_cols = std::tuple_cat(std::make_tuple(skeys), std::tuple_cat(s));
+
+    std::string csvr = "tables/csv/tabler.csv";
+    write_to_csv<join_key_t, col_t, R_NUM_COLS-1>(rkeys, nr, r, csvr);
+
+    std::string csvs = "tables/csv/tables.csv";
+    write_to_csv<join_key_t, col_t, S_NUM_COLS-1>(skeys, ns, s, csvs);
 
     ScanOperator<TupleR> op1(std::move(b_cols), nr, nr);
     ScanOperator<TupleS> op2(std::move(p_cols), ns, ns);
