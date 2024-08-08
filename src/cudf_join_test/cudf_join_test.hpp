@@ -97,7 +97,7 @@ int main(int argc, char const** argv) {
 
     cudaEventRecord(start);
 
-    auto result = inner_join(table_r, table_s, {0, 1}, {0, 1}, cudf::null_equality::EQUAL);
+    auto result = inner_join(table_r, table_s, {0}, {0}, cudf::null_equality::EQUAL);
 
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
@@ -108,8 +108,10 @@ int main(int argc, char const** argv) {
     cudaEventDestroy(start);
     cudaEventDestroy(stop);
 
-    std::cout << "table_r: " << result->view().num_rows() << " rows " << result->view().num_columns()
+    std::cout << "table_result: " << result->view().num_rows() << " rows " << result->view().num_columns()
          << " columns\n";
+
+
 
     return 0;
 }
