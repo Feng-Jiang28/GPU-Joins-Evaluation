@@ -63,6 +63,12 @@ int main(int argc, char const** argv) {
 
     cout << table_path_r << " : " << table_path_s << "\n";
 
+    cudaEvent_t start, stop;
+    float milliseconds = 0;
+
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
     auto const mr_name = string("cuda");
 
     auto resource = create_memory_resource(mr_name);
@@ -80,6 +86,8 @@ int main(int argc, char const** argv) {
         return cudf::io::read_csv(in_opts).tbl;
     }();
 
+
+
     auto const table_r = r_result -> view();
     std::cout << "table_r: " << table_r.num_rows() << " rows " << table_r.num_columns()
            << " columns\n";
@@ -87,7 +95,18 @@ int main(int argc, char const** argv) {
     std::cout << "table_s: " << table_s.num_rows() << " rows " << table_s.num_columns()
            << " columns\n";
 
+    cudaEventRecord(start);
+
     auto result = inner_join(table_r, table_s, {0, 1}, {0, 1}, cudf::null_equality::EQUAL);
+
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&milliseconds, start, stop);
+
+    std::cout << "Join took " << milliseconds << " ms" << std::endl;
+
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
 
     std::cout << "table_r: " << result->view().num_rows() << " rows " << result->view().num_columns()
          << " columns\n";
