@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cuda_runtime.h>
+
 #include <cudf/io/csv.hpp>
 #include <cudf/io/datasource.hpp>
 

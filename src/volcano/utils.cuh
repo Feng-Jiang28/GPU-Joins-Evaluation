@@ -12,7 +12,7 @@
 
 #define SETUP_TIMING() cudaEvent_t start, stop; cudaEventCreate(&start); cudaEventCreate(&stop);
 
-/*
+
 #define TIME_FUNC(f,t) { \
     cudaEventRecord(start, 0); \
     f; \
@@ -20,7 +20,6 @@
     cudaEventSynchronize(stop); \
     cudaEventElapsedTime(&t, start,stop); \
 }
-*/
 #define TIME_FUNC_ACC(f,t) { \
     cudaEventRecord(start, 0); \
     f; \
