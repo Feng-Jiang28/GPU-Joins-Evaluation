@@ -184,8 +184,12 @@ private:
     
 #if defined(SM860)
     const int sm_counts = 82;
+#elif defined(SM700)
+    const int sm_counts = 80;
 #elif defined(SM800)
     const int sm_counts = 108;
+#else
+    #error "No SM version defined"
 #endif
 
     init_metadata_double<<<sm_counts, NT, 0>>> (
